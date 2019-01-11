@@ -2,6 +2,21 @@
 
 Universal Zombie Control Interface
 
+## Dev Install
+
+To test windows environment we use Vbox API. So you need to install vbox SDK.
+
+You can find the SDK on the VirtualBox [downloads](https://www.virtualbox.org/wiki/Downloads) page. Unzip the archive and run the vboxapisetup.py file using your system Python with the following command:
+
+```bash
+python vboxapisetup.py install
+```
+
+This bindings search on global machine, so you don't need to install on a virtualenv.
+
+For the best compatibility we use the official edge virtual machines. You can find this images
+[here](https://developer.microsoft.com/en-us/microsoft-edge/tools/vms/).
+
 ## Concepto
 
 Brain Slug consta de varias partes más pequeñas:

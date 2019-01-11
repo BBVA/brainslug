@@ -1,0 +1,3 @@
+pyvbox
+pypiwin32
+retrying
