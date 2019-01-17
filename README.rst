@@ -17,9 +17,9 @@ Concepto
 
 Brain Slug consta de varias partes más pequeñas:
 
-  * Un código de infección de la máquina que hace un curl | interpreteX
-  * Una sesión de servidor con la que se puede controla el flujo sin que
-    el cliente tenga ningún tipo de lógica
+* Un código de infección de la máquina que hace un curl | interpreteX
+* Una sesión de servidor con la que se puede controla el flujo sin que el
+  cliente tenga ningún tipo de lógica
 
 
 Infección
