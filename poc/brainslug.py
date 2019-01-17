@@ -1,8 +1,10 @@
-import asyncio
 from uuid import uuid4 as uuid
+import asyncio
+import json
 import weakref
 
 from aiohttp import web
+
 
 APPS = dict()
 RUNNING = dict()
@@ -19,7 +21,7 @@ async def process_agent_request(request, agent_type, machine_id,
     evaluate or an error.
 
     """
-    #TODO: Verify `agent_type`, `machine_id` and `process_id` format.
+    # TODO: Verify `agent_type`, `machine_id` and `process_id` format.
 
     last_result = await request.content()  # FIXME
     next_code = await last_result_just_arrived(agent_type, machine_id,
@@ -36,12 +38,14 @@ async def run_app(request, app_name):
     return web.json_response(run(fn))
 
 
-async def get_process_state(request):
-    pass
+async def get_process_state(request, pid):
+    process = RUNNING[pid]
+    return web.json_response(process.state)
 
 
-async def input_process(request):
-    pass
+async def input_process(request, pid):
+    process = RUNNING[pid]
+    process.state.user_input = await request.content()  # FIXME
 
 
 #
@@ -116,22 +120,39 @@ class Session:
             return self.next_step_content
 
 
-class Web:
-    pass
+class UserAPI(dict):
+    def __init__(self, *args, **kwargs):
+        self.user_input = None
+        super().__init__(*args, **kwargs)
 
+class Zombie(ABCMeta):
+    def __init__(self, remote_eval):
+        self.remote_eval = remote_eval
 
-class Zombie:
-    # TODO: Transpiller
+    @abstractmethod
     def listdir(self, path):
         pass
 
+class PythonZombie(Zombie):
+    def listdir(self, path):
+        res = self.remote_eval("""
+import os
+os.listdir()
+""")
+        return json.loads(res)
+        
+class PowerShellZombie(Zombie):
+    def listdir(self, path):
+        res = json.loads(self.remote_eval("""
+        dir
+"""))
+        return reversed([x["Name"] for x in res])
 
 class ZombieSpec(dict):
     def match(self, session):
         return True
 
     def get_best(self, session_list):
-        # TODO: Find first (itertools?)
         for session in session_list:
             if self.match(session):
                 return session
@@ -154,6 +175,13 @@ def zombieapp(fn):
     return _zombieapp
 
 
+class Process:
+    def __init__(self, fn, userapi, **kwargs):
+        self.state = userapi
+        self.thread = threading.Thread(fn, args=[webapi], kwargs=kwargs)
+        self.thread.start()
+
+
 def run(fn):
     zombies = dict()
 
@@ -168,8 +196,8 @@ def run(fn):
 
     pid = uuid4()
 
-    RUNNING[pid] = threading.Thread(fn, kwargs=zombies)
-    RUNNING[pid].start()
+    userapi = UserAPI()
+    RUNNING[pid] = Process(fn, userapi, **zombies)
 
     return pid
 
@@ -177,8 +205,8 @@ def run(fn):
 # Available apps
 #
 @zombieapp(z=ZombieSpec(machine_id='pepe', platform='linux'))
-def list_current_dir(z):
-    pass
+def list_current_dir(userapi, z):
+    userapi["out"] = z.listdir(".")
 
 
 if __name__ == '__main__':
