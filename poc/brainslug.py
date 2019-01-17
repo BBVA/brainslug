@@ -23,7 +23,7 @@ async def process_agent_request(request, agent_type, machine_id,
     """
     # TODO: Verify `agent_type`, `machine_id` and `process_id` format.
 
-    last_result = await request.content()  # FIXME
+    last_result = await request.read()
     next_code = await last_result_just_arrived(agent_type, machine_id,
                                                process_id, last_result)
     return next_code
@@ -45,7 +45,7 @@ async def get_process_state(request, pid):
 
 async def input_process(request, pid):
     process = RUNNING[pid]
-    process.state.user_input = await request.content()  # FIXME
+    process.state.user_input = await request.read()
 
 
 #
