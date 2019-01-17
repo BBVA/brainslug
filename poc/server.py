@@ -14,24 +14,16 @@ class _RemoteException(Exception):
 RemoteException = _RemoteException()
 
 
-class _RemoteVar:
-    def __init__(self, id, type):
-        self.id = id
-        self.type = type
+class Registrable(type):
+    def __new__(
 
-    def __str__(self):
-        """Return the code to fetch the variable remotely."""
-        raise NotImplementedError()
-
-class RemoteFileHandler(_RemoteVar):
-    def __init__( # XXX
-
-
-
-class Task:
+class Remote:
 
     exception = RemoteException
 
     def __init__(self, id):
         self.id = id
+
+    def __getattr__(self, name):
+        if 
 
