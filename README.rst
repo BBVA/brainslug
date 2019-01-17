@@ -76,3 +76,13 @@ explotación.
 Se pueden tener meta aplicaciones que orquesten multi tareas en un
 zombie o multi zombie. Para esto se necesita abrir un fork en la máquina
 remota que instancie un nuevo zombie.
+
+
+PoC 1
+-----
+
+La poc consiste en los siguientes aplicaciones y todo lo necesario para
+implementarlas:
+
+* Lista el directorio: Ejecuta un os.listdir('.') y devuelve el
+  resultado en un zombie.
