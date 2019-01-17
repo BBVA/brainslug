@@ -1,3 +1,4 @@
+from abc import ABCMeta, abstractmethod
 from uuid import uuid4 as uuid
 import asyncio
 import json
@@ -8,7 +9,7 @@ from aiohttp import web
 
 APPS = dict()
 RUNNING = dict()
-SESSIONS = weakref.WeakDictValue()
+SESSIONS = weakref.WeakValueDictionary()
 
 #
 # Endpoints
@@ -168,10 +169,10 @@ class ZombieApp:
         return self.fn(*args, **kwargs)
 
 
-def zombieapp(fn):
-    APPS[fn.__name__] = fn
-    def _zombieapp(**kwargs):
-        return ZombieApp(fn=fn, spec=kwargs)
+def zombieapp(**spec):
+    def _zombieapp(fn):
+        APPS[fn.__name__] = fn
+        return ZombieApp(fn=fn, spec=spec)
     return _zombieapp
 
 
