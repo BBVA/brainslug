@@ -6,7 +6,21 @@ import asyncio
 
 
 class SyncedVar:
-    """A variable synced using an asyncio.Event."""
+    """
+    A variable synced using an asyncio.Event.
+
+    >>> class Foo:
+    ...     bar = SyncedVar()
+    >>> foo = Foo()
+
+    Setting a SyncedVar value is a synchronous operation::
+    >>> foo.bar = 'myvalue'
+
+    Getting a SyncedVar value is an asynchonous operation::
+    >>> asyncio.get_event_loop().run_until_complete(foo.bar)
+    'myvalue'
+
+    """
     def get_value(self, instance):
         """Return the stored value from the instance."""
         name = f"__syncvar_{id(self)}_value"
