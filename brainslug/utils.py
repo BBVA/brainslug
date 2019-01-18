@@ -9,16 +9,21 @@ class SyncedVar:
     """
     A variable synced using an asyncio.Event.
 
-    >>> class Foo:
-    ...     bar = SyncedVar()
-    >>> foo = Foo()
+    A SyncedVar is a data-descriptor. Therefore is used as a class
+    property.
+        >>> class Foo:
+        ...     bar = SyncedVar()
 
-    Setting a SyncedVar value is a synchronous operation::
-    >>> foo.bar = 'myvalue'
+    On the instances...
+        >>> foo = Foo()
 
-    Getting a SyncedVar value is an asynchonous operation::
-    >>> asyncio.get_event_loop().run_until_complete(foo.bar)
-    'myvalue'
+    Setting the value is a synchronous operation:
+        >>> foo.bar = 'myvalue'
+
+    Getting the value is an asynchonous operation:
+        >>> loop = asyncio.get_event_loop()
+        >>> loop.run_until_complete(foo.bar)
+        'myvalue'
 
     """
     def get_value(self, instance):
