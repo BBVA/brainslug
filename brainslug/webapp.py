@@ -1,2 +1,2 @@
-def process_agent_request():
+async def process_agent_request():
     pass
