@@ -9,18 +9,18 @@ class SyncedVar:
     """A variable synced using an asyncio.Event."""
     def get_value(self, instance):
         """Return the stored value from the instance."""
-        name = f"_syncvar_{id(self)}_value"
+        name = f"__syncvar_{id(self)}_value"
         if not hasattr(instance, name):
             setattr(instance, name, None)
         return getattr(instance, name)
 
     def set_value(self, instance, value):
         """Set the stored value from the instance."""
-        return setattr(instance, f"_syncvar_{id(self)}_value", value)
+        return setattr(instance, f"__syncvar_{id(self)}_value", value)
 
     def get_event(self, instance):
         """Get the Event object used for synchronization."""
-        name = f"_syncvar_{id(self)}_event"
+        name = f"__syncvar_{id(self)}_event"
         if not hasattr(instance, name):
             setattr(instance, name, asyncio.Event())
         return getattr(instance, name)
