@@ -26,14 +26,18 @@ class Session:
     _code = SyncedVar()
     _result = SyncedVar()
 
+    def __post_init__(self):
+        self._eval_lock = asyncio.Lock()
+
     async def remote_eval(self, code):
         """
         Arrange the execution of `code` in the remote agent, returning
         it result eventually.
 
         """
-        self._code = code
-        return await self._result
+        async with self._eval_lock:
+            self._code = code
+            return await self._result
 
     async def first_step(self):
         """Return the first code to be evaluated by the remote agent."""

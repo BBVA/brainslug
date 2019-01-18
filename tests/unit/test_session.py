@@ -126,3 +126,33 @@ async def test_second_remote_eval_returns_second_next_step_result(event_loop, se
         assert await task_left is result
     finally:
         task_right.cancel()
+
+
+@pytest.mark.asyncio
+@pytest.mark.slowtest
+async def test_remote_eval_cant_be_used_in_parallel(event_loop, session):
+    async def right_side():
+        await session.first_step()
+        await session.next_step(None)
+
+    async def left_side():
+        await session.remote_eval(None)
+
+    task_left1 = asyncio.create_task(left_side())
+    task_left2 = asyncio.create_task(left_side())
+    task_right = asyncio.create_task(right_side())
+
+    # One of the left tasks should finish
+    done, pending = await asyncio.wait([task_left1, task_left2],
+                                       return_when=asyncio.FIRST_COMPLETED)
+
+    assert len(done) == len(pending) == 1
+
+    pending = pending.pop()
+
+    # The other should hang
+    with pytest.raises(asyncio.TimeoutError):
+        await asyncio.wait_for(pending, timeout=1)
+
+    task_right.cancel()
+    pending.cancel()
