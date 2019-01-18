@@ -15,7 +15,7 @@ SESSIONS = weakref.WeakValueDictionary()
 @dataclasses.dataclass
 class Session:
     """
-    Manage the communication channel among one agent and one or more
+    Manage the communication channel between an agent and one or more
     zombie instances.
 
     """
@@ -31,8 +31,8 @@ class Session:
 
     async def remote_eval(self, code):
         """
-        Arrange the execution of `code` in the remote agent, returning
-        it result eventually.
+        Arrange the execution of `code` on the remote agent, eventually
+        returning its result.
 
         """
         async with self._eval_lock:
@@ -46,7 +46,7 @@ class Session:
     async def next_step(self, last_result):
         """
         Receive the result of the last evaluation and return the next
-        code to evaluate.
+        code to evaluate eventually.
 
         """
         self._result = last_result

@@ -41,9 +41,6 @@ class SyncedVar:
         return wait_for_value()
 
     def __set__(self, instance, value):
-        """
-        Set the value and send the event.
-
-        """
+        """Set the value and the event."""
         self.set_value(instance, value)
         self.get_event(instance).set()
