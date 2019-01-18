@@ -19,6 +19,7 @@ async def test_syncedvar_get_is_a_coroutine(event_loop):
 
 
 @pytest.mark.asyncio
+@pytest.mark.slowtest
 async def test_syncedvar_get_hangs(event_loop):
     class Foo:
         bar = SyncedVar()
@@ -44,6 +45,7 @@ async def test_syncedvar_get_finish_if_set_is_called(event_loop):
 
 
 @pytest.mark.asyncio
+@pytest.mark.slowtest
 async def test_syncedvar_second_time_get_also_hangs(event_loop):
     class Foo:
         bar = SyncedVar()
