@@ -1,1 +1,2 @@
-process_agent_request = None
+def process_agent_request():
+    pass
