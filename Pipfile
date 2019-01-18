@@ -9,6 +9,7 @@ verify_ssl = true
 pytest = "*"
 pycodestyle = "*"
 pylint = "*"
+pytest-asyncio = "*"
 
 [requires]
 python_version = "3.7"
