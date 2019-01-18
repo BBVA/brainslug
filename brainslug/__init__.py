@@ -11,37 +11,46 @@ class Session:
         self.machine_id = machine_id
         self.process_id = process_id
 
-        self._code = None
-        self._code_available = asyncio.Event()
+        self._code_value = None
+        self._code_event = asyncio.Event()
 
-        self._result = None
-        self._result_available = asyncio.Event()
+        self._result_value = None
+        self._result_event = asyncio.Event()
 
-    async def _get_code(self):
-        await self._code_available.wait()
-        self._code_available.clear()
-        return self._code
+    @property
+    def code(self):
+        async def get_code():
+            await self._code_event.wait()
+            self._code_event.clear()
+            return self._code_value
+        return get_code
 
-    def _set_code(self, value):
-        self._code = value
-        self._code_available.set()
 
-    async def _get_result(self):
-        await self._result_available.wait()
-        self._result_available.clear()
-        return self._result
+    @code.setter
+    def code(self, value):
+        self._code_value = value
+        self._code_event.set()
 
-    def _set_result(self, value):
-        self._result = value
-        self._result_available.set()
+    @property
+    def result(self):
+        async def get_result():
+            await self._result_event.wait()
+            self._result_event.clear()
+            return self._result_value
+        return get_result
+
+    @result.setter
+    def result(self, value):
+        self._result_value = value
+        self._result_event.set()
 
     async def remote_eval(self, code):
-        self._set_code(code)
-        return await self._get_result()
+        self.code = code
+        return await self.result()
 
     async def first_step(self):
-        return await self._get_code()
+        return await self.code()
 
     async def next_step(self, last_result):
-        self._set_result(last_result)
-        return await self._get_code()
+        self.result = last_result
+        return await self.code()
