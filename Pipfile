@@ -10,6 +10,7 @@ pytest = "*"
 pycodestyle = "*"
 pylint = "*"
 pytest-asyncio = "*"
+pytest-aiohttp = "*"
 
 [requires]
 python_version = "3.7"
