@@ -23,12 +23,14 @@ def test_session_store_attributes():
 
 
 @pytest.mark.asyncio
+@pytest.mark.slowtest
 async def test_first_step_hangs_without_the_other_side(event_loop, session):
     with pytest.raises(asyncio.TimeoutError):
         await asyncio.wait_for(session.first_step(), 1)
 
 
 @pytest.mark.asyncio
+@pytest.mark.slowtest
 async def test_first_step_returns_code_after_remote_eval(event_loop, session):
     code = object()
 
@@ -39,12 +41,14 @@ async def test_first_step_returns_code_after_remote_eval(event_loop, session):
 
 
 @pytest.mark.asyncio
+@pytest.mark.slowtest
 async def test_remote_eval_hangs_without_the_other_side(event_loop, session):
     with pytest.raises(asyncio.TimeoutError):
         await asyncio.wait_for(session.remote_eval(None), 1)
 
 
 @pytest.mark.asyncio
+@pytest.mark.slowtest
 async def test_first_remote_eval_hangs_after_first_step(event_loop, session):
 
     task = asyncio.create_task(session.first_step())
@@ -56,6 +60,7 @@ async def test_first_remote_eval_hangs_after_first_step(event_loop, session):
 
 
 @pytest.mark.asyncio
+@pytest.mark.slowtest
 async def test_first_remote_eval_returns_first_next_step_data(event_loop, session):
     result = object()
 
@@ -68,6 +73,7 @@ async def test_first_remote_eval_returns_first_next_step_data(event_loop, sessio
 
 
 @pytest.mark.asyncio
+@pytest.mark.slowtest
 async def test_next_step_hangs_after_first_remote_eval(event_loop, session):
     async def right_side():
         await session.first_step()
