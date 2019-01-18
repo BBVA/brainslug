@@ -14,10 +14,20 @@ class Session:
         self.code = None
         self.code_available = asyncio.Event()
 
-    async def first_step(self):
-        await self.code_available.wait()
-        return self.code
+        self.result = None
+        self.result_available = asyncio.Event()
 
     async def remote_eval(self, code):
         self.code = code
         self.code_available.set()
+        await self.result_available.wait()
+        return self.result
+
+    async def first_step(self):
+        await self.code_available.wait()
+        return self.code
+
+    async def next_step(self, last_result):
+        self.result = last_result
+        self.result_available.set()
+        await asyncio.sleep(2)
