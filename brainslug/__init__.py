@@ -11,23 +11,37 @@ class Session:
         self.machine_id = machine_id
         self.process_id = process_id
 
-        self.code = None
-        self.code_available = asyncio.Event()
+        self._code = None
+        self._code_available = asyncio.Event()
 
-        self.result = None
-        self.result_available = asyncio.Event()
+        self._result = None
+        self._result_available = asyncio.Event()
+
+    async def _get_code(self):
+        await self._code_available.wait()
+        self._code_available.clear()
+        return self._code
+
+    def _set_code(self, value):
+        self._code = value
+        self._code_available.set()
+
+    async def _get_result(self):
+        await self._result_available.wait()
+        self._result_available.clear()
+        return self._result
+
+    def _set_result(self, value):
+        self._result = value
+        self._result_available.set()
 
     async def remote_eval(self, code):
-        self.code = code
-        self.code_available.set()
-        await self.result_available.wait()
-        return self.result
+        self._set_code(code)
+        return await self._get_result()
 
     async def first_step(self):
-        await self.code_available.wait()
-        return self.code
+        return await self._get_code()
 
     async def next_step(self, last_result):
-        self.result = last_result
-        self.result_available.set()
-        await asyncio.sleep(2)
+        self._set_result(last_result)
+        return await self._get_code()
