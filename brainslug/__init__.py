@@ -44,7 +44,7 @@ class Session:
 
     @code.setter
     def code(self, value):
-        """Stores the code and flag it arrival."""
+        """Store the code and flag its arrival."""
         self._code_value = value
         self._code_event.set()
 
@@ -66,7 +66,7 @@ class Session:
 
     @result.setter
     def result(self, value):
-        """Stores the result and flag it arrival."""
+        """Store the result and flag its arrival."""
         self._result_value = value
         self._result_event.set()
 
