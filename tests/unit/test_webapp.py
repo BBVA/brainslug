@@ -22,7 +22,8 @@ def cli(aiohttp_client):
     app.router.add_post('/next-code/{agent_code}/{machine_id}/{process_id}', process_agent_request)
     return asyncio.get_event_loop().run_until_complete(aiohttp_client(app))
 
+
 async def test_process_agent_request_not_found_whitout_parameters(cli):
     resp = await cli.post('/next-code', data={})
-    assert resp.status == 400, "must return not found if no parameters"
+    assert resp.status == 404, "must return not found if no parameters"
 
