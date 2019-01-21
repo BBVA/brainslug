@@ -1,11 +1,14 @@
 from abc import ABCMeta, abstractmethod
-import functools
-import asyncio
+import time
 from concurrent.futures import ThreadPoolExecutor
+import asyncio
+import functools
 import json
-import threading
-import uuid
 import operator as op
+import sys
+import threading
+import traceback
+import uuid
 import weakref
 
 from aiohttp import web
@@ -14,47 +17,12 @@ from tinydb.middlewares import Middleware
 from tinydb.storages import MemoryStorage
 from tinydb import TinyDB, Query
 
-import weakref
-
-
-# class WeakRefMiddleware(Middleware):
-#     def __init__(self, storage_cls=TinyDB.DEFAULT_STORAGE):
-#         # Any middleware *has* to call the super constructor
-#         # with storage_cls
-#         super(WeakRefMiddleware, self).__init__(storage_cls)
-
-#     def _filter_data_by_lost_weakref(self, data):
-#         to_remove = list()
-#         for table_name in data:
-#             table = data[table_name]
-
-#             for doc_id in table:
-#                 item = table[doc_id]
-
-#                 if item.get('__channel__', lambda: None)() is None:
-#                     to_remove.append(doc_id)
-#         for doc_id in to_remove:
-#             del table[doc_id]
-
-#     def read(self):
-#         data = self.storage.read()
-#         if data:
-#             self._filter_data_by_lost_weakref(data)
-#         return data
-
-#     def write(self, data):
-#         if data:
-#             self._filter_data_by_lost_weakref(data)
-#         self.storage.write(data)
-
-#     def close(self):
-#         self.storage.close()
-
 
 # ✂ - brainslug/__init__.py ------------------------------------- ✂
 
 # XXX: Cada mochuelo a su olivo
 # APPS = dict()
+EXIT = None
 RUNNING = dict()
 SESSIONS = TinyDB(storage=MemoryStorage)
 LANGUAGES = dict()  # name: transpiler
@@ -259,8 +227,9 @@ def run_in_rt(coro, loop):
     return asyncio.run_coroutine_threadsafe(coro, loop).result()
 
 
-async def spawn_brainslugapp(fn, loop):
+async def spawn_brainslugapp(fn, app):
     # Espera a que a estén todos los recursos que pide `fn`.
+    loop = asyncio.get_event_loop()
     resources = None
     while fn.spec and resources is None:
         _resources = dict()
@@ -273,34 +242,54 @@ async def spawn_brainslugapp(fn, loop):
                 remote = doc['__language__']
                 channel = doc['__channel__']
                 _resources[name] = remote(
-                    lambda code: run_in_rt(channel.remote_eval(code),
-                                           loop))
+                    lambda code: run_in_rt(channel.remote_eval(code), loop))
         else:
             resources = _resources
             break
 
-        print("Waiting for workers...")
+        # print("Waiting for workers...")
         await asyncio.sleep(1)
 
     # print("Workers found!")
 
     executor = ThreadPoolExecutor(max_workers=1)
-    return await loop.run_in_executor(executor, lambda: fn(**resources))
+    try:
+        await loop.run_in_executor(executor, lambda: fn(**resources))
+    except Exception:
+        _, _, tb = sys.exc_info()
+        return tb
+    else:
+        return None
+    finally:
+        loop.create_task(app.cleanup())
 
+
+async def start_background_brainslug(fn, app):
+    loop = asyncio.get_event_loop()
+    app['brainslug_task'] = loop.create_task(spawn_brainslugapp(fn, app))
+
+async def cleanup_background_task(app):
+    exc = await app['brainslug_task']
+    if exc is not None:
+        traceback.print_tb(exc)
+        sys.exit(1)
+    else:
+        sys.exit(0)
 
 def run(fn):
-    loop = asyncio.get_event_loop()
-
-    loop.create_task(spawn_brainslugapp(fn, loop))
-
-    asyncio.set_event_loop(loop)
+    global EXIT
     app = web.Application()
     app.add_routes([
-        web.post('/channel/{__key__}',
+        web.post('/channel/{__key__}/{__language__}',
                  process_agent_request),
         # web.post('/boot/{__language__}/{__key__}'),
     ])
-    web.run_app(app)
+
+    app.on_startup.append(functools.partial(start_background_brainslug, fn))
+    app.on_cleanup.append(cleanup_background_task)
+
+    web.run_app(app, print=None)
+    sys.exit(EXIT)
 
 
 # # --------------------------------------------------------------- ✂
