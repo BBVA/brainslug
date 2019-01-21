@@ -14,7 +14,7 @@ CHANNELS = weakref.WeakValueDictionary()
 class Channel:
     """
     Manage the communication channel between an agent and one or more
-    zombie instances.
+    remote instances.
 
     """
     _code = SyncedVar()
