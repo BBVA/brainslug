@@ -12,5 +12,6 @@ setup(name='brainslug',
       include_package_data=True,
       zip_safe=False,
       install_requires=[
-        'aiohttp',
+        'aiohttp==3.5.4',
+        'tinydb==3.12.2'
       ])
