@@ -296,8 +296,9 @@ def run(fn):
     asyncio.set_event_loop(loop)
     app = web.Application()
     app.add_routes([
-        web.post('/next-code/{__key__}/{__language__}',
+        web.post('/channel/{__key__}',
                  process_agent_request),
+        # web.post('/boot/{__language__}/{__key__}'),
     ])
     web.run_app(app)
 
