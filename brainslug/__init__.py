@@ -4,29 +4,23 @@ Contains the application runtime primitives and the global state.
 """
 import asyncio
 import weakref
-import dataclasses
 
 from brainslug.utils import SyncedVar
 
 # Global application state
-SESSIONS = weakref.WeakValueDictionary()
+CHANNELS = weakref.WeakValueDictionary()
 
 
-@dataclasses.dataclass
-class Session:
+class Channel:
     """
     Manage the communication channel between an agent and one or more
     zombie instances.
 
     """
-    agent_type: object
-    machine_id: object
-    process_id: object
-
     _code = SyncedVar()
     _result = SyncedVar()
 
-    def __post_init__(self):
+    def __init__(self):
         self._eval_lock = asyncio.Lock()
 
     async def remote_eval(self, code):

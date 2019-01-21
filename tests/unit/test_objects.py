@@ -2,28 +2,28 @@ import inspect
 import weakref
 
 
-def test_session_exist():
+def test_channel_exist():
     try:
-        from brainslug import Session
+        from brainslug import Channel
     except ImportError as exc:
         assert False, exc
 
 
-def test_session_is_a_class():
-    from brainslug import Session
-    assert inspect.isclass(Session)
+def test_channel_is_a_class():
+    from brainslug import Channel
+    assert inspect.isclass(Channel)
 
 
-def test_sessions_exists():
+def test_channels_exists():
     try:
-        from brainslug import SESSIONS
+        from brainslug import CHANNELS
     except ImportError as exc:
         assert False, exc
 
 
-def test_sessions_is_a_weakvaluedictionary():
-    from brainslug import SESSIONS
-    assert isinstance(SESSIONS, weakref.WeakValueDictionary)
+def test_channels_is_a_weakvaluedictionary():
+    from brainslug import CHANNELS
+    assert isinstance(CHANNELS, weakref.WeakValueDictionary)
 
 
 def test_syncedvar_exists():
