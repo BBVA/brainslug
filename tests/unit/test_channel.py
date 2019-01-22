@@ -1,8 +1,14 @@
 from contextlib import suppress
 import asyncio
+import inspect
 import pytest
 
 from brainslug import Channel
+
+
+def test_channel_is_a_class():
+    from brainslug import Channel
+    assert inspect.isclass(Channel)
 
 
 def test_channel_needs_no_parameters():

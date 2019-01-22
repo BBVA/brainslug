@@ -1,4 +1,3 @@
-import inspect
 import weakref
 
 from tinydb import TinyDB
@@ -11,11 +10,6 @@ def test_channel_exist():
         assert False, exc
 
 
-def test_channel_is_a_class():
-    from brainslug import Channel
-    assert inspect.isclass(Channel)
-
-
 def test_channels_exists():
     try:
         from brainslug import CHANNELS
@@ -23,7 +17,7 @@ def test_channels_exists():
         assert False, exc
 
 
-def test_channels_is_a_weakvaluedictionary():
+def test_channels_is_a_tinydb_instance():
     from brainslug import CHANNELS
     assert isinstance(CHANNELS, TinyDB)
 
@@ -33,11 +27,6 @@ def test_syncedvar_exists():
         from brainslug.utils import SyncedVar
     except ImportError as exc:
         assert False, exc
-
-
-def test_syncedvar_is_a_class():
-    from brainslug.utils import SyncedVar
-    assert inspect.isclass(SyncedVar)
 
 
 def test_syncedvar_is_a_data_descriptor():
@@ -51,8 +40,3 @@ def test_slug_exist():
         from brainslug import Slug
     except ImportError as exc:
         assert False, exc
-
-
-def test_slug_is_a_class():
-    from brainslug import Slug
-    assert inspect.isclass(Slug)
