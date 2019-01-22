@@ -1,4 +1,5 @@
-config_routes = None
+def config_routes():
+    pass
 
 
 async def process_agent_request():
