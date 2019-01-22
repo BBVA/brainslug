@@ -63,3 +63,14 @@ class SyncedVar:
         """Set the value and the event."""
         self.set_value(instance, value)
         self.get_event(instance).set()
+
+
+def to_remote(loop, doc):
+    remote = doc['__language__']
+    channel = doc['__channel__']
+
+    def _run_threadsafe(code):
+        return asyncio.run_coroutine_threadsafe(
+            channel.remote_eval(code), loop).result()
+
+    return remote(_run_threadsafe)

@@ -7,6 +7,7 @@ import pytest
                          [('brainslug', 'Channel'),
                           ('brainslug', 'CHANNELS'),
                           ('brainslug.utils', 'SyncedVar'),
+                          ('brainslug.utils', 'to_remote'),
                           ('brainslug', 'Brain'),
                           ('brainslug.webapp', 'process_agent_request'),
                           ('brainslug', 'Slug')])
@@ -28,4 +29,3 @@ def test_channels_is_a_tinydb_instance():
 def test_brain_is_a_query():
     from brainslug import Brain
     assert Query in Brain.__mro__
-
