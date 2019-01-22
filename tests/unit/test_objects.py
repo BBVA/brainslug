@@ -7,6 +7,7 @@ import pytest
                          [('brainslug', 'Channel'),
                           ('brainslug', 'CHANNELS'),
                           ('brainslug.utils', 'SyncedVar'),
+                          ('brainslug.utils', 'run_in_thread'),
                           ('brainslug', 'Slug')])
 def test_object_is_importable(module_name, name):
     try:
