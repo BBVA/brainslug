@@ -6,6 +6,7 @@ import pytest
 @pytest.mark.parametrize('module_name, name',
                          [('brainslug', 'Channel'),
                           ('brainslug', 'CHANNELS'),
+                          ('brainslug', 'ChannelStorage'),
                           ('brainslug.utils', 'SyncedVar'),
                           ('brainslug.utils', 'to_remote'),
                           ('brainslug', 'Brain'),
@@ -22,8 +23,8 @@ def test_object_is_importable(module_name, name):
 
 
 def test_channels_is_a_tinydb_instance():
-    from brainslug import CHANNELS
-    assert isinstance(CHANNELS, TinyDB)
+    from brainslug import CHANNELS, ChannelStorage
+    assert isinstance(CHANNELS, ChannelStorage)
 
 
 def test_brain_is_a_query():
