@@ -7,9 +7,9 @@ import pytest
                          [('brainslug', 'Channel'),
                           ('brainslug', 'CHANNELS'),
                           ('brainslug.utils', 'SyncedVar'),
-                          ('brainslug', 'Slug'),
                           ('brainslug', 'Brain'),
-                          ])
+                          ('brainslug.webapp', 'process_agent_request'),
+                          ('brainslug', 'Slug')])
 def test_object_is_importable(module_name, name):
     try:
         module = importlib.import_module(module_name)
@@ -28,3 +28,4 @@ def test_channels_is_a_tinydb_instance():
 def test_brain_is_a_query():
     from brainslug import Brain
     assert Query in Brain.__mro__
+
