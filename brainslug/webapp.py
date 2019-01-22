@@ -1,3 +1,6 @@
+config_routes = None
+
+
 async def process_agent_request():
     pass
 

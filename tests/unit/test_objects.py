@@ -13,6 +13,7 @@ import pytest
                           ('brainslug.utils', 'wait_for_resources'),
                           ('brainslug', 'Brain'),
                           ('brainslug.webapp', 'process_agent_request'),
+                          ('brainslug.webapp', 'config_routes'),
                           ('brainslug', 'Slug')])
 def test_object_is_importable(module_name, name):
     try:
