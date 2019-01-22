@@ -1,5 +1,5 @@
-def config_routes():
-    pass
+def config_routes(web):
+    return web
 
 
 async def process_agent_request():
