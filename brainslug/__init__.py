@@ -5,10 +5,14 @@ Contains the application runtime primitives and the global state.
 import asyncio
 import weakref
 
+from tinydb import TinyDB
+from tinydb.storages import MemoryStorage
+
 from brainslug.utils import SyncedVar
 
+
 # Global application state
-CHANNELS = weakref.WeakValueDictionary()
+CHANNELS = TinyDB(storage=MemoryStorage)
 
 
 class Channel:

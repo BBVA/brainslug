@@ -1,6 +1,8 @@
 import inspect
 import weakref
 
+from tinydb import TinyDB
+
 
 def test_channel_exist():
     try:
@@ -23,7 +25,7 @@ def test_channels_exists():
 
 def test_channels_is_a_weakvaluedictionary():
     from brainslug import CHANNELS
-    assert isinstance(CHANNELS, weakref.WeakValueDictionary)
+    assert isinstance(CHANNELS, TinyDB)
 
 
 def test_syncedvar_exists():
