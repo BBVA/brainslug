@@ -2,6 +2,7 @@
 Contains the application runtime primitives and the global state.
 
 """
+from concurrent.futures import ThreadPoolExecutor
 import asyncio
 import functools
 import weakref
@@ -63,3 +64,9 @@ class Slug:
 
     def __call__(self, *args, **kwargs):
         return self.fn(*args, **kwargs)
+
+    @staticmethod
+    async def run_in_thread(fn):
+        loop = asyncio.get_event_loop()
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            return await loop.run_in_executor(executor, fn)

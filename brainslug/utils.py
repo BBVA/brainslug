@@ -2,7 +2,6 @@
 Miscelaneous utilities for brainslug.
 
 """
-from concurrent.futures import ThreadPoolExecutor
 import asyncio
 
 
@@ -64,9 +63,3 @@ class SyncedVar:
         """Set the value and the event."""
         self.set_value(instance, value)
         self.get_event(instance).set()
-
-
-async def run_in_thread(fn):
-    loop = asyncio.get_event_loop()
-    with ThreadPoolExecutor(max_workers=1) as executor:
-        return await loop.run_in_executor(executor, fn)
