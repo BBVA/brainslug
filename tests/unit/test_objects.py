@@ -1,20 +1,21 @@
-import weakref
-
+import importlib
 from tinydb import TinyDB
+import pytest
 
 
-def test_channel_exist():
+@pytest.mark.parametrize('module_name, name',
+                         [('brainslug', 'Channel'),
+                          ('brainslug', 'CHANNELS'),
+                          ('brainslug.utils', 'SyncedVar'),
+                          ('brainslug', 'Slug')])
+def test_object_is_importable(module_name, name):
     try:
-        from brainslug import Channel
+        module = importlib.import_module(module_name)
     except ImportError as exc:
         assert False, exc
-
-
-def test_channels_exists():
-    try:
-        from brainslug import CHANNELS
-    except ImportError as exc:
-        assert False, exc
+    else:
+        assert hasattr(module, name), \
+               f"Object {name} not found in module {module_name}"
 
 
 def test_channels_is_a_tinydb_instance():
@@ -22,21 +23,7 @@ def test_channels_is_a_tinydb_instance():
     assert isinstance(CHANNELS, TinyDB)
 
 
-def test_syncedvar_exists():
-    try:
-        from brainslug.utils import SyncedVar
-    except ImportError as exc:
-        assert False, exc
-
-
 def test_syncedvar_is_a_data_descriptor():
     from brainslug.utils import SyncedVar
     assert hasattr(SyncedVar, '__set__')
     assert hasattr(SyncedVar, '__get__')
-
-
-def test_slug_exist():
-    try:
-        from brainslug import Slug
-    except ImportError as exc:
-        assert False, exc
