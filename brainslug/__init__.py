@@ -83,6 +83,7 @@ class Slug:
     def __init__(self, fn, spec):
         self.fn = fn
         self.spec = spec
+        self.loop = asyncio.get_event_loop()
 
     @classmethod
     def create(cls, spec=None):

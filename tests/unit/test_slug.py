@@ -1,3 +1,4 @@
+import asyncio
 import inspect
 import threading
 from unittest.mock import MagicMock as Mock
@@ -17,6 +18,11 @@ def test_slug_stores_attributes():
     slug = Slug(fn, spec)
     assert slug.fn is fn
     assert slug.spec is spec
+
+
+def test_slug_contains_the_event_loop():
+    slug = Slug(None, None)
+    assert slug.loop is asyncio.get_event_loop()
 
 
 def test_slug_create_is_a_decorator_returning_a_slug():
