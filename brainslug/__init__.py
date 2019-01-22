@@ -7,11 +7,13 @@ import asyncio
 import functools
 import weakref
 
-from tinydb import TinyDB
+from tinydb import TinyDB, Query
 from tinydb.storages import MemoryStorage
 
 from brainslug.utils import SyncedVar
 
+#: Used to query for resources
+Brain = Query()
 
 # Global application state
 CHANNELS = TinyDB(storage=MemoryStorage)

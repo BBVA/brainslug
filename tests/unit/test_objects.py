@@ -1,5 +1,5 @@
 import importlib
-from tinydb import TinyDB
+from tinydb import TinyDB, Query
 import pytest
 
 
@@ -7,7 +7,9 @@ import pytest
                          [('brainslug', 'Channel'),
                           ('brainslug', 'CHANNELS'),
                           ('brainslug.utils', 'SyncedVar'),
-                          ('brainslug', 'Slug')])
+                          ('brainslug', 'Slug'),
+                          ('brainslug', 'Brain'),
+                          ])
 def test_object_is_importable(module_name, name):
     try:
         module = importlib.import_module(module_name)
@@ -21,3 +23,8 @@ def test_object_is_importable(module_name, name):
 def test_channels_is_a_tinydb_instance():
     from brainslug import CHANNELS
     assert isinstance(CHANNELS, TinyDB)
+
+
+def test_brain_is_a_query():
+    from brainslug import Brain
+    assert Query in Brain.__mro__
