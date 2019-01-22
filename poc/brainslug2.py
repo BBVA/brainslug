@@ -21,7 +21,21 @@ from tinydb import TinyDB, Query
 # ✂ - brainslug/__init__.py ------------------------------------- ✂
 
 RUNNING = dict()
-SESSIONS = TinyDB(storage=MemoryStorage)
+class ChannelStorage:
+    def __init__(self):
+        self.db = TinyDB(storage=MemoryStorage)
+        self.new_channel = asyncio.Condition()
+
+    def search(self, *args, **kwargs):
+        return self.db.search(*args, **kwargs)
+
+    async def insert(self, *args, **kwargs):
+        res = self.db.insert(*args, **kwargs)
+        async with self.new_channel:
+            self.new_channel.notify_all()
+        return res
+
+SESSIONS = ChannelStorage()
 LANGUAGES = dict()  # name: transpiler
 Q = Query()
 
@@ -64,7 +78,7 @@ async def last_result_just_arrived(key, language, meta, last_result):
         session['__key__'] = key
         session['__channel__'] = Channel()
         session['__language__'] = language
-        SESSIONS.insert(session)
+        await SESSIONS.insert(session)
         return (await session['__channel__'].first_step())
     else:
         return (await session['__channel__'].next_step(last_result))
@@ -244,7 +258,8 @@ async def prepare(fn):
             break
 
         # print("Waiting for workers...")
-        await asyncio.sleep(1)
+        async with SESSIONS.new_channel:
+            await SESSIONS.new_channel.wait()
     return functools.partial(fn, **resources)
 
 
