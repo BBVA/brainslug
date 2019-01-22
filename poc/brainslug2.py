@@ -20,9 +20,6 @@ from tinydb import TinyDB, Query
 
 # ✂ - brainslug/__init__.py ------------------------------------- ✂
 
-# XXX: Cada mochuelo a su olivo
-# APPS = dict()
-EXIT = None
 RUNNING = dict()
 SESSIONS = TinyDB(storage=MemoryStorage)
 LANGUAGES = dict()  # name: transpiler
@@ -226,8 +223,7 @@ def brainslugapp(**spec):
 def run_in_rt(coro, loop):
     return asyncio.run_coroutine_threadsafe(coro, loop).result()
 
-
-async def spawn_brainslugapp(fn, app):
+async def prepare(fn):
     # Espera a que a estén todos los recursos que pide `fn`.
     loop = asyncio.get_event_loop()
     resources = None
@@ -249,24 +245,30 @@ async def spawn_brainslugapp(fn, app):
 
         # print("Waiting for workers...")
         await asyncio.sleep(1)
+    return functools.partial(fn, **resources)
 
-    # print("Workers found!")
 
+async def run_in_thread(fn):
     executor = ThreadPoolExecutor(max_workers=1)
     try:
-        await loop.run_in_executor(executor, lambda: fn(**resources))
+        await asyncio.get_event_loop().run_in_executor(executor, fn)
     except Exception:
         _, _, tb = sys.exc_info()
         return tb
     else:
         return None
-    finally:
-        loop.create_task(app.cleanup())
+
+async def run_user_app(fn):
+    await run_in_thread(await prepare(fn))
+
+async def runner(fn, app):
+    await run_user_app(fn)
+    asyncio.get_event_loop().create_task(app.cleanup())
 
 
 async def start_background_brainslug(fn, app):
     loop = asyncio.get_event_loop()
-    app['brainslug_task'] = loop.create_task(spawn_brainslugapp(fn, app))
+    app['brainslug_task'] = loop.create_task(runner(fn, app))
 
 async def cleanup_background_task(app):
     exc = await app['brainslug_task']
@@ -277,7 +279,7 @@ async def cleanup_background_task(app):
         sys.exit(0)
 
 def run(fn):
-    global EXIT
+    # TODO: refactor
     app = web.Application()
     app.add_routes([
         web.post('/channel/{__key__}/{__language__}',
@@ -289,7 +291,6 @@ def run(fn):
     app.on_cleanup.append(cleanup_background_task)
 
     web.run_app(app, print=None)
-    sys.exit(EXIT)
 
 
 # # --------------------------------------------------------------- ✂
