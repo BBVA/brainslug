@@ -21,9 +21,3 @@ def test_object_is_importable(module_name, name):
 def test_channels_is_a_tinydb_instance():
     from brainslug import CHANNELS
     assert isinstance(CHANNELS, TinyDB)
-
-
-def test_syncedvar_is_a_data_descriptor():
-    from brainslug.utils import SyncedVar
-    assert hasattr(SyncedVar, '__set__')
-    assert hasattr(SyncedVar, '__get__')

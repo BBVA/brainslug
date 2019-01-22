@@ -5,6 +5,11 @@ import pytest
 from brainslug.utils import SyncedVar
 
 
+def test_syncedvar_is_a_data_descriptor():
+    assert hasattr(SyncedVar, '__set__')
+    assert hasattr(SyncedVar, '__get__')
+
+
 @pytest.mark.asyncio
 async def test_syncedvar_get_is_a_coroutine(event_loop):
     class Foo:
