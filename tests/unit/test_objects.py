@@ -44,3 +44,15 @@ def test_syncedvar_is_a_data_descriptor():
     from brainslug.utils import SyncedVar
     assert hasattr(SyncedVar, '__set__')
     assert hasattr(SyncedVar, '__get__')
+
+
+def test_slug_exist():
+    try:
+        from brainslug import Slug
+    except ImportError as exc:
+        assert False, exc
+
+
+def test_slug_is_a_class():
+    from brainslug import Slug
+    assert inspect.isclass(Slug)

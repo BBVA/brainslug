@@ -49,3 +49,9 @@ class Channel:
         """
         self._result = last_result
         return await self._code
+
+
+class Slug:
+    def __init__(self, fn, spec):
+        self.fn = fn
+        self.spec = spec
