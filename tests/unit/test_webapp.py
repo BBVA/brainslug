@@ -1,5 +1,7 @@
 from brainslug import webapp
+import asyncio
 import aiohttp
+import pytest
 
 
 def test_config_routes_is_a_function():
@@ -10,6 +12,10 @@ def test_config_routes_return_the_same_app():
     origin = aiohttp.web.Application()
     assert webapp.config_routes(origin) is origin, "config routes must return the same app"
 
-async def test_process_agent_request_not_found_whitout_parameters(cli):
+
+async def test_channel_not_found_without_parameters(aiohttp_client, loop):
+    app = aiohttp.web.Application()
+    webapp.config_routes(app)
+    cli = await aiohttp_client(app)
     resp = await cli.post('/channel', data={})
     assert resp.status == 404, "must return not found if no parameters"
