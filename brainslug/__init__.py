@@ -3,6 +3,7 @@ Contains the application runtime primitives and the global state.
 
 """
 import asyncio
+import functools
 import weakref
 
 from tinydb import TinyDB
@@ -55,3 +56,10 @@ class Slug:
     def __init__(self, fn, spec):
         self.fn = fn
         self.spec = spec
+
+    @classmethod
+    def create(cls, spec=None):
+        return functools.partial(Slug, spec=spec)
+
+    def __call__(self, *args, **kwargs):
+        return self.fn(*args, **kwargs)
