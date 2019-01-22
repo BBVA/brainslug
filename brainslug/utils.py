@@ -74,3 +74,15 @@ def to_remote(loop, doc):
             channel.remote_eval(code), loop).result()
 
     return remote(_run_threadsafe)
+
+
+def get_resources(loop, store, spec):
+    resources = dict()
+    for name, query in spec.items():
+        found = store.search(query)
+        if found:
+            # TODO: Implement MANY to return a list
+            resources[name] = to_remote(loop, found[0])
+        else:
+            return None
+    return resources

@@ -9,6 +9,7 @@ import pytest
                           ('brainslug', 'ChannelStorage'),
                           ('brainslug.utils', 'SyncedVar'),
                           ('brainslug.utils', 'to_remote'),
+                          ('brainslug.utils', 'get_resources'),
                           ('brainslug', 'Brain'),
                           ('brainslug.webapp', 'process_agent_request'),
                           ('brainslug', 'Slug')])
