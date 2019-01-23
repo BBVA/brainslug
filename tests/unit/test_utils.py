@@ -93,7 +93,7 @@ async def test_wait_for_resources_return_resources(event_loop):
     with patch('brainslug.utils.get_resources') as get_resources:
         get_resources.return_value = resources
 
-        assert await wait_for_resources(None, None) is resources
+        assert await wait_for_resources(event_loop, None, None) is resources
 
 
 @pytest.mark.asyncio
@@ -106,7 +106,7 @@ async def test_wait_for_resources_hangs_if_no_resources(event_loop):
         get_resources.side_effect = itertools.repeat(None)
 
         with pytest.raises(asyncio.TimeoutError):
-            await asyncio.wait_for(wait_for_resources(store, spec), 1)
+            await asyncio.wait_for(wait_for_resources(event_loop, store, spec), 1)
 
         get_resources.assert_called()
 
@@ -124,7 +124,7 @@ async def test_wait_for_resources_calls_wait_for_every_failed_get_resources(even
             itertools.repeat(None, num_fails),
             [result])
 
-        await asyncio.wait_for(wait_for_resources(store, spec), 1)
+        await asyncio.wait_for(wait_for_resources(event_loop, store, spec), 1)
 
         assert get_resources.call_count == num_fails + 1
         assert store.wait_for_new_channel.call_count == num_fails
