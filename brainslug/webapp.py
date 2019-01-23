@@ -1,4 +1,5 @@
 from aiohttp import web
+from brainslug import LANGUAGES
 
 
 def config_routes(app):
@@ -12,7 +13,10 @@ async def process_agent_request(language, key, meta, last_result):
 
 
 async def channel_input(request):
-    lang = request.match_info['__language__']
+    try:
+        lang = LANGUAGES[request.match_info['__language__']]
+    except KeyError:
+        raise web.HTTPNotFound()
     key = request.match_info['__key__']
     await process_agent_request(lang, key, None, None)
     return web.Response()

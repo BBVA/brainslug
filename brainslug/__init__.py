@@ -18,7 +18,7 @@ from brainslug import webapp
 Brain = Query()
 
 #: Languages Storage
-LANGUAGES = None
+LANGUAGES = dict()
 
 
 class ChannelStorage:
