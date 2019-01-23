@@ -19,3 +19,11 @@ async def test_channel_not_found_without_parameters(aiohttp_client, loop):
     cli = await aiohttp_client(app)
     resp = await cli.post('/channel', data={})
     assert resp.status == 404, "must return not found if no parameters"
+
+
+async def test_channel_must_respond(aiohttp_client, loop):
+    app = aiohttp.web.Application()
+    webapp.config_routes(app)
+    cli = await aiohttp_client(app)
+    resp = await cli.post('/channel/powershell/pepe')
+    assert resp.status == 200, "channel endpoint must respond"

@@ -1,5 +1,12 @@
-def config_routes(web):
-    return web
+from aiohttp import web
+
+
+def config_routes(app):
+    app.add_routes([
+            web.post('/channel/{__language__}/{__key__}', channel_input)
+    ])
+
+    return app
 
 
 async def process_agent_request():
@@ -7,4 +14,4 @@ async def process_agent_request():
 
 
 async def channel_input(request):
-    pass
+    return web.Response()
