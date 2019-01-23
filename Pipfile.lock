@@ -80,7 +80,9 @@
         },
         "hypothesis": {
             "hashes": [
-                "sha256:482fa8e50d8a25edfd2cf07e9a7e17d712c1af37f58e707a918603013a17fd07"
+                "sha256:482fa8e50d8a25edfd2cf07e9a7e17d712c1af37f58e707a918603013a17fd07",
+                "sha256:64eac2ca79307672894a0593f0e1cccd4e77edc38317f11aaae95c640ab30eff",
+                "sha256:d10e1d193cd3a7c35bf4d8229eae920e31fe030889295d9b1262885cc25dc9c4"
             ],
             "index": "pypi",
             "version": "==4.1.0"
