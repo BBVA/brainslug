@@ -88,3 +88,12 @@ def get_resources(loop, store, spec):
             return None
 
     return resources
+
+
+async def wait_for_resources(store, spec):
+    loop = asyncio.get_event_loop()
+    resources = get_resources(loop, store, spec)
+    while resources is None:
+        await store.wait_for_new_channel()
+        resources = get_resources(loop, store, spec)
+    return resources

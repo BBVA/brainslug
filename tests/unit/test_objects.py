@@ -10,6 +10,7 @@ import pytest
                           ('brainslug.utils', 'SyncedVar'),
                           ('brainslug.utils', 'to_remote'),
                           ('brainslug.utils', 'get_resources'),
+                          ('brainslug.utils', 'wait_for_resources'),
                           ('brainslug', 'Brain'),
                           ('brainslug.webapp', 'process_agent_request'),
                           ('brainslug', 'Slug')])

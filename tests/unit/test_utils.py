@@ -1,13 +1,17 @@
 from unittest.mock import MagicMock as Mock
 from unittest.mock import patch
+import itertools
+import asyncio
 import threading
 
-import pytest
 from hypothesis import given
 from hypothesis import strategies as st
+import pytest
 
-from brainslug.utils import to_remote, get_resources
 from brainslug import ChannelStorage, Brain
+from brainslug.utils import get_resources
+from brainslug.utils import to_remote
+from brainslug.utils import wait_for_resources
 
 
 @pytest.mark.asyncio
@@ -82,3 +86,45 @@ async def test_get_resources_calls_to_remote_and_returns_in_dict_value(keys, eve
     with patch('brainslug.utils.to_remote', _to_remote) as to_remote:
         resources = get_resources(event_loop, store, spec)
         assert resources == {k: k for k in keys}
+
+
+async def test_wait_for_resources_return_resources(event_loop):
+    resources = object()
+    with patch('brainslug.utils.get_resources') as get_resources:
+        get_resources.return_value = resources
+
+        assert await wait_for_resources(None, None) is resources
+
+
+@pytest.mark.asyncio
+async def test_wait_for_resources_hangs_if_no_resources(event_loop):
+    class store:
+        wait_for_new_channel = staticmethod(lambda: asyncio.sleep(0))
+    spec = {'foo': Brain['foo'] == 'bar'}
+
+    with patch('brainslug.utils.get_resources') as get_resources:
+        get_resources.side_effect = itertools.repeat(None)
+
+        with pytest.raises(asyncio.TimeoutError):
+            await asyncio.wait_for(wait_for_resources(store, spec), 1)
+
+        get_resources.assert_called()
+
+
+@given(num_fails=st.integers(min_value=0, max_value=100))
+@pytest.mark.asyncio
+@pytest.mark.slowtest
+async def test_wait_for_resources_calls_wait_for_every_failed_get_resources(event_loop, num_fails):
+    store = Mock()
+    store.wait_for_new_channel.side_effect = lambda: asyncio.sleep(0)
+    spec = {'foo': Brain['foo'] == 'bar'}
+    result = {'foo': object()}
+    with patch('brainslug.utils.get_resources') as get_resources:
+        get_resources.side_effect = itertools.chain(
+            itertools.repeat(None, num_fails),
+            [result])
+
+        await asyncio.wait_for(wait_for_resources(store, spec), 1)
+
+        assert get_resources.call_count == num_fails + 1
+        assert store.wait_for_new_channel.call_count == num_fails
