@@ -19,5 +19,8 @@ async def channel_input(request):
         raise web.HTTPNotFound()
     key = request.match_info['__key__']
     meta = dict(request.rel_url.query)
-    await process_agent_request(lang, key, meta, None)
+    last_result = await request.read()
+    if not last_result:
+        last_result = None
+    await process_agent_request(lang, key, meta, last_result)
     return web.Response()
