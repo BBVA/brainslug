@@ -7,10 +7,12 @@ import asyncio
 import functools
 import weakref
 
+from aiohttp import web
 from tinydb import TinyDB, Query
 from tinydb.storages import MemoryStorage
 
 from brainslug import utils
+from brainslug import webapp
 
 #: Used to query for resources
 Brain = Query()
@@ -110,4 +112,14 @@ class Slug:
         return await self.run_in_thread(prepared)
 
 
-run_web_server = None
+async def run_web_server():
+    app = web.Application()
+    webapp.config_routes(app)
+
+    runner = web.AppRunner(app)
+    await runner.setup()
+
+    server = web.TCPSite(runner, 'localhost', 8080, shutdown_timeout=0)
+    asyncio.create_task(server.start())
+
+    return runner
