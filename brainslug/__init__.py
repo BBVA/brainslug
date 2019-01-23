@@ -15,6 +15,9 @@ from brainslug import utils
 #: Used to query for resources
 Brain = Query()
 
+#: Languages Storage
+LANGUAGES = None
+
 
 class ChannelStorage:
     """
