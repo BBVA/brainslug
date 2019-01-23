@@ -10,7 +10,7 @@ import weakref
 from tinydb import TinyDB, Query
 from tinydb.storages import MemoryStorage
 
-from brainslug.utils import SyncedVar
+from brainslug import utils
 
 #: Used to query for resources
 Brain = Query()
@@ -49,8 +49,8 @@ class Channel:
     remote instances.
 
     """
-    _code = SyncedVar()
-    _result = SyncedVar()
+    _code = utils.SyncedVar()
+    _result = utils.SyncedVar()
 
     def __init__(self):
         self._eval_lock = asyncio.Lock()
@@ -95,3 +95,9 @@ class Slug:
     async def run_in_thread(self, fn):
         with ThreadPoolExecutor(max_workers=1) as executor:
             return await self.loop.run_in_executor(executor, fn)
+
+    async def attach_resources(self):
+        resources = await utils.wait_for_resources(self.loop,
+                                                   CHANNELS,
+                                                   self.spec)
+        return functools.partial(self.fn, **resources)

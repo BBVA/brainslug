@@ -2,6 +2,7 @@ import asyncio
 import inspect
 import threading
 from unittest.mock import MagicMock as Mock
+from unittest.mock import patch
 
 import pytest
 
@@ -101,3 +102,32 @@ async def test_run_in_thread_calls_function_in_a_thread(event_loop):
     this_thread = threading.currentThread()
     other_thread = await slug.run_in_thread(threading.currentThread)
     assert this_thread != other_thread
+
+
+@pytest.mark.asyncio
+async def test_attach_resources_waits_for_resources(event_loop):
+    slug = Slug(lambda:None, None)
+    async def _wait_for_resources():
+        return {}
+    with patch('brainslug.utils.wait_for_resources') as wait_for_resources:
+        wait_for_resources.return_value = _wait_for_resources()
+        await slug.attach_resources()
+        wait_for_resources.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_attach_resources_return_fn_wrapped(event_loop):
+    resources = object()
+    called = False
+    def fn(arg):
+        nonlocal called
+        assert arg is resources
+        called = True
+    async def _wait_for_resources():
+        return {'arg': resources}
+    slug = Slug(fn, None)
+    with patch('brainslug.utils.wait_for_resources') as wait_for_resources:
+        wait_for_resources.return_value = _wait_for_resources()
+        wrapped = await slug.attach_resources()
+        wrapped()
+        assert called
