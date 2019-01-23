@@ -43,6 +43,7 @@ async def test_get_resources_returns_none_when_spec_not_satisfied(event_loop):
 
 @given(keys=st.sets(st.text()))
 @pytest.mark.asyncio
+@pytest.mark.slowtest
 async def test_get_resources_calls_store_search_for_each_spec(keys, event_loop):
     store = Mock()
     spec = {k: Brain[k] == k for k in keys}
@@ -52,6 +53,7 @@ async def test_get_resources_calls_store_search_for_each_spec(keys, event_loop):
 
 @given(keys=st.sets(st.text()))
 @pytest.mark.asyncio
+@pytest.mark.slowtest
 async def test_get_resources_calls_to_remote_for_each_doc_found(keys, event_loop):
     store = ChannelStorage()
     for key in keys:
@@ -65,6 +67,7 @@ async def test_get_resources_calls_to_remote_for_each_doc_found(keys, event_loop
 
 @given(keys=st.sets(st.text()))
 @pytest.mark.asyncio
+@pytest.mark.slowtest
 async def test_get_resources_calls_to_remote_and_returns_in_dict_value(keys, event_loop):
     store = ChannelStorage()
     for key in keys:
