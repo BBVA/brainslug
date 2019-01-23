@@ -279,27 +279,28 @@ def create_app():
     ])
     return app
 
-
-async def _run(fn):
+async def run_web_server():
     app = create_app()
+
     runner = web.AppRunner(app)
     await runner.setup()
     server = web.TCPSite(runner, 'localhost', 8080, shutdown_timeout=0)
     server_task = asyncio.create_task(server.start())
-    res = await run_user_app(fn)
-    await runner.cleanup()
-    print("Bye!")
+
+    return runner
+
+async def _run_slug(fn):
+    web_server = await run_web_server()
+
+    try:
+        return await run_user_app(fn)
+    finally:
+        await web_server.cleanup()
 
 
-def run(fn):
+def run(slug):
     loop = asyncio.get_event_loop()
-    return loop.run_until_complete(_run(fn))
-
-
-    # app.on_startup.append(functools.partial(start_background_brainslug, fn))
-    # app.on_cleanup.append(cleanup_background_task)
-
-    # web.run_app(app, print=None)
+    return loop.run_until_complete(_run_slug(slug))
 
 
 # # --------------------------------------------------------------- ✂
@@ -307,26 +308,13 @@ def run(fn):
 # # --------------------------------------------------------------- ✂
 
 
-# import brainslug
-
 @brainslugapp(pepe=((Q.hostname == 'pepe') & (Q.platform == 'linux')))
 def list_current_dir(pepe):
     for path in ['.', '..', '/tmp']:
         for filename in pepe.listdir(path):
             print(path, filename)
+    return "I love you honey bunny!"
+
 
 if __name__ == '__main__':
-    run(list_current_dir)
-
-# # - Ejemplo de interfaz -------------------------
-# from brainslug import language
-
-# java = language('java')
-
-# @java('os.listdir')
-# def llll(remote, path):
-#     if remote.remote_eval('mis') == 'akkaka':
-#         raise FileNotFoundError()
-
-
-# METHODS[('java', 'os.listdir')] = llll
+    print(run(list_current_dir))
