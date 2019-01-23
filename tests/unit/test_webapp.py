@@ -8,9 +8,9 @@ def test_config_routes_is_a_function():
     assert callable(webapp.config_routes), "config routes must be a function"
 
 
-def test_config_routes_return_the_same_app():
+def test_config_routes_return_none():
     origin = aiohttp.web.Application()
-    assert webapp.config_routes(origin) is origin, "config routes must return the same app"
+    assert webapp.config_routes(origin) is None, "config routes must return none"
 
 
 async def test_channel_not_found_without_parameters(aiohttp_client, loop):

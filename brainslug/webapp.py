@@ -6,8 +6,6 @@ def config_routes(app):
             web.post('/channel/{__language__}/{__key__}', channel_input)
     ])
 
-    return app
-
 
 async def process_agent_request():
     pass
