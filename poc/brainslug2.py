@@ -264,48 +264,42 @@ async def prepare(fn):
 
 
 async def run_in_thread(fn):
-    executor = ThreadPoolExecutor(max_workers=1)
-    try:
-        await asyncio.get_event_loop().run_in_executor(executor, fn)
-    except Exception:
-        _, _, tb = sys.exc_info()
-        return tb
-    else:
-        return None
+    with ThreadPoolExecutor(max_workers=1) as executor:
+        return await asyncio.get_event_loop().run_in_executor(executor, fn)
 
 async def run_user_app(fn):
-    await run_in_thread(await prepare(fn))
+    return await run_in_thread(await prepare(fn))
 
-async def runner(fn, app):
-    await run_user_app(fn)
-    asyncio.get_event_loop().create_task(app.cleanup())
-
-
-async def start_background_brainslug(fn, app):
-    loop = asyncio.get_event_loop()
-    app['brainslug_task'] = loop.create_task(runner(fn, app))
-
-async def cleanup_background_task(app):
-    exc = await app['brainslug_task']
-    if exc is not None:
-        traceback.print_tb(exc)
-        sys.exit(1)
-    else:
-        sys.exit(0)
-
-def run(fn):
-    # TODO: refactor
+def create_app():
     app = web.Application()
     app.add_routes([
         web.post('/channel/{__key__}/{__language__}',
                  process_agent_request),
         # web.post('/boot/{__language__}/{__key__}'),
     ])
+    return app
 
-    app.on_startup.append(functools.partial(start_background_brainslug, fn))
-    app.on_cleanup.append(cleanup_background_task)
 
-    web.run_app(app, print=None)
+async def _run(fn):
+    app = create_app()
+    runner = web.AppRunner(app)
+    await runner.setup()
+    server = web.TCPSite(runner, 'localhost', 8080, shutdown_timeout=0)
+    server_task = asyncio.create_task(server.start())
+    res = await run_user_app(fn)
+    await runner.cleanup()
+    print("Bye!")
+
+
+def run(fn):
+    loop = asyncio.get_event_loop()
+    return loop.run_until_complete(_run(fn))
+
+
+    # app.on_startup.append(functools.partial(start_background_brainslug, fn))
+    # app.on_cleanup.append(cleanup_background_task)
+
+    # web.run_app(app, print=None)
 
 
 # # --------------------------------------------------------------- ✂
