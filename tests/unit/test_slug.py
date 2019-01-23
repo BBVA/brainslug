@@ -68,7 +68,8 @@ def test_slug_is_a_passthrough_callable():
 @pytest.mark.asyncio
 async def test_run_in_thread_calls_function(event_loop):
     fn = Mock()
-    await Slug.run_in_thread(fn)
+    slug = Slug(None, None)
+    await slug.run_in_thread(fn)
     fn.assert_called_once()
 
 
@@ -77,7 +78,8 @@ async def test_run_in_thread_returns_same_as_fn(event_loop):
     expected = object()
     def fn():
         return expected
-    assert await Slug.run_in_thread(fn) is expected
+    slug = Slug(None, None)
+    assert await slug.run_in_thread(fn) is expected
 
 
 @pytest.mark.asyncio
@@ -88,12 +90,14 @@ async def test_run_in_thread_raise_fn_exception(event_loop):
     def fn():
         raise CustomException()
 
+    slug = Slug(None, None)
     with pytest.raises(CustomException):
-        await Slug.run_in_thread(fn)
+        await slug.run_in_thread(fn)
 
 
 @pytest.mark.asyncio
 async def test_run_in_thread_calls_function_in_a_thread(event_loop):
+    slug = Slug(None, None)
     this_thread = threading.currentThread()
-    other_thread = await Slug.run_in_thread(threading.currentThread)
+    other_thread = await slug.run_in_thread(threading.currentThread)
     assert this_thread != other_thread

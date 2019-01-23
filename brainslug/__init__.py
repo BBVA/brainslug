@@ -92,8 +92,6 @@ class Slug:
     def __call__(self, *args, **kwargs):
         return self.fn(*args, **kwargs)
 
-    @staticmethod
-    async def run_in_thread(fn):
-        loop = asyncio.get_event_loop()
+    async def run_in_thread(self, fn):
         with ThreadPoolExecutor(max_workers=1) as executor:
-            return await loop.run_in_executor(executor, fn)
+            return await self.loop.run_in_executor(executor, fn)
