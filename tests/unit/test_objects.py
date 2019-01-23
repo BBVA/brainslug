@@ -6,7 +6,7 @@ import pytest
 @pytest.mark.parametrize('module_name, name',
                          [('brainslug', 'Channel'),
                           ('brainslug', 'CHANNELS'),
-                          ('brainslug', 'LANGUAGES'),
+                          ('brainslug.languages', 'LANGUAGES'),
                           ('brainslug', 'ChannelStorage'),
                           ('brainslug.utils', 'SyncedVar'),
                           ('brainslug.utils', 'to_remote'),

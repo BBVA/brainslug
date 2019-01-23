@@ -27,7 +27,7 @@ async def test_channel_must_respond(aiohttp_client, loop):
     current_langs = {
         "powershell": "powershell_lang"
     }
-    with patch.dict('brainslug.LANGUAGES', current_langs):
+    with patch.dict('brainslug.languages.LANGUAGES', current_langs):
         webapp.config_routes(app)
         cli = await aiohttp_client(app)
         resp = await cli.post('/channel/powershell/pepe')
@@ -41,7 +41,7 @@ async def test_channel_must_call_par(aiohttp_client, loop):
     }
 
     with patch('brainslug.webapp.process_agent_request') as par_mock:
-        with patch.dict('brainslug.LANGUAGES', current_langs):
+        with patch.dict('brainslug.languages.LANGUAGES', current_langs):
             par_mock.return_value = asyncio.sleep(0)
             webapp.config_routes(app)
             cli = await aiohttp_client(app)
@@ -57,7 +57,7 @@ async def test_channel_must_call_par_with_correct_arguments(aiohttp_client, loop
     }
 
     with patch('brainslug.webapp.process_agent_request') as par_mock:
-        with patch.dict('brainslug.LANGUAGES', current_langs):
+        with patch.dict('brainslug.languages.LANGUAGES', current_langs):
             par_mock.return_value = asyncio.sleep(0)
             webapp.config_routes(app)
             cli = await aiohttp_client(app)
