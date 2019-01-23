@@ -6,11 +6,11 @@ from aiohttp import web
 
 
 @pytest.fixture
-def cli(aiohttp_client):
-    from brainslug.webapp import process_agent_request
+def cli(aiohttp_client, loop):
+    from brainslug.webapp import config_routes
     app = web.Application()
-    app.router.add_post('/channel/{lang}/{id}', process_agent_request)
-    return asyncio.get_event_loop().run_until_complete(aiohttp_client(app))
+    config_routes(app)
+    return loop.run_until_complete(aiohttp_client(app))
 
 
 @pytest.yield_fixture()

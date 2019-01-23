@@ -1,5 +1,5 @@
 from aiohttp import web
-from brainslug.languages import LANGUAGES 
+from brainslug.languages import LANGUAGES
 
 
 def config_routes(app):
