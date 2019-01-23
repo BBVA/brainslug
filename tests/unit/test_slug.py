@@ -39,10 +39,10 @@ def test_slug_create_respect_parameters():
     def fn():
         pass
 
-    slug = Slug.create(spec)(fn)
+    slug = Slug.create(spec=spec)(fn)
 
     assert slug.fn is fn
-    assert slug.spec is spec
+    assert slug.spec == {'spec': spec}
 
 
 def test_slug_call_calls_fn():

@@ -86,7 +86,7 @@ class Slug:
         self.loop = asyncio.get_event_loop()
 
     @classmethod
-    def create(cls, spec=None):
+    def create(cls, **spec):
         return functools.partial(Slug, spec=spec)
 
     def __call__(self, *args, **kwargs):
