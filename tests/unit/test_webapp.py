@@ -2,6 +2,7 @@ from brainslug import webapp
 import asyncio
 import aiohttp
 import pytest
+import unittest
 
 
 def test_config_routes_is_a_function():
@@ -27,3 +28,14 @@ async def test_channel_must_respond(aiohttp_client, loop):
     cli = await aiohttp_client(app)
     resp = await cli.post('/channel/powershell/pepe')
     assert resp.status == 200, "channel endpoint must respond"
+
+
+async def test_channel_must_call_par(aiohttp_client, loop):
+    app = aiohttp.web.Application()
+    with unittest.mock.patch('brainslug.webapp.process_agent_request') as par_mock:
+        par_mock.return_value = asyncio.sleep(0)
+        webapp.config_routes(app)
+        cli = await aiohttp_client(app)
+        resp = await cli.post('/channel/powershell/pepe')
+        assert resp.status == 200, "channel endpoint must respond"
+        par_mock.assert_called_once()

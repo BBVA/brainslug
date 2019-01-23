@@ -12,4 +12,5 @@ async def process_agent_request():
 
 
 async def channel_input(request):
+    await process_agent_request()
     return web.Response()
