@@ -26,5 +26,4 @@ before_script:
 
 test:
   script:
-  - pipenv run pytest -vv --doctest-modules brainslug tests
-  - pipenv run pycodestyle brainslug
+  - ./pipeline.sh
