@@ -1,6 +1,7 @@
-import warnings
-import pytest
 import asyncio
+import gc
+import pytest
+import warnings
 
 from aiohttp import web
 
@@ -14,11 +15,16 @@ def cli(aiohttp_client, loop):
 
 
 @pytest.yield_fixture()
-def event_loop_nowarn():
-    warnings.filterwarnings("ignore")
+def event_loop():
+    oldloop = asyncio.get_event_loop()
+    wfilters = warnings.filters.copy()
     try:
-        loop = asyncio.get_event_loop()
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        warnings.filterwarnings("ignore")
         yield loop
-        loop.close()
     finally:
-        warnings.resetwarnings()
+        loop.close()
+        gc.collect()
+        warnings.filters = wfilters  # Restore old filters
+        asyncio.set_event_loop(oldloop)

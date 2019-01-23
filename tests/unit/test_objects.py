@@ -14,6 +14,7 @@ import pytest
                           ('brainslug.utils', 'wait_for_resources'),
                           ('brainslug', 'Brain'),
                           ('brainslug', 'run_web_server'),
+                          ('brainslug', 'run_slug'),
                           ('brainslug.webapp', 'process_agent_request'),
                           ('brainslug.webapp', 'config_routes'),
                           ('brainslug', 'Slug')])

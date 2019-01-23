@@ -88,7 +88,6 @@ class Slug:
     def __init__(self, fn, spec):
         self.fn = fn
         self.spec = spec
-        self.loop = asyncio.get_event_loop()
 
     @classmethod
     def create(cls, **spec):
@@ -97,19 +96,20 @@ class Slug:
     def __call__(self, *args, **kwargs):
         return self.fn(*args, **kwargs)
 
-    async def run_in_thread(self, fn):
-        with ThreadPoolExecutor(max_workers=1) as executor:
-            return await self.loop.run_in_executor(executor, fn)
+    async def run_in_thread(self, loop, fn):
+        executor = ThreadPoolExecutor(max_workers=1)
+        return await loop.run_in_executor(executor, fn)
 
-    async def attach_resources(self):
-        resources = await utils.wait_for_resources(self.loop,
+    async def attach_resources(self, loop):
+        resources = await utils.wait_for_resources(loop,
                                                    CHANNELS,
                                                    self.spec)
         return functools.partial(self.fn, **resources)
 
     async def run(self):
-        prepared = await self.attach_resources()
-        return await self.run_in_thread(prepared)
+        loop = asyncio.get_event_loop()
+        prepared = await self.attach_resources(loop)
+        return await self.run_in_thread(loop, prepared)
 
 
 async def run_web_server():
@@ -120,6 +120,15 @@ async def run_web_server():
     await runner.setup()
 
     server = web.TCPSite(runner, 'localhost', 8080, shutdown_timeout=0)
-    asyncio.create_task(server.start())
+    task = asyncio.create_task(server.start())
 
-    return runner
+    return (task, runner)
+
+
+async def run_slug(slug):
+    t, runner = await run_web_server()
+    try:
+        return await slug.run()
+    finally:
+        await runner.cleanup()
+        await t

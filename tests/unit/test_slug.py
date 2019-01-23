@@ -21,9 +21,9 @@ def test_slug_stores_attributes():
     assert slug.spec is spec
 
 
-def test_slug_contains_the_event_loop():
-    slug = Slug(None, None)
-    assert slug.loop is asyncio.get_event_loop()
+# def test_slug_contains_the_event_loop():
+#     slug = Slug(None, None)
+#     assert slug.loop is asyncio.get_event_loop()
 
 
 def test_slug_create_is_a_decorator_returning_a_slug():
@@ -70,7 +70,7 @@ def test_slug_is_a_passthrough_callable():
 async def test_run_in_thread_calls_function(event_loop):
     fn = Mock()
     slug = Slug(None, None)
-    await slug.run_in_thread(fn)
+    res = await slug.run_in_thread(event_loop, fn)
     fn.assert_called_once()
 
 
@@ -80,7 +80,7 @@ async def test_run_in_thread_returns_same_as_fn(event_loop):
     def fn():
         return expected
     slug = Slug(None, None)
-    assert await slug.run_in_thread(fn) is expected
+    assert await slug.run_in_thread(event_loop, fn) is expected
 
 
 @pytest.mark.asyncio
@@ -93,14 +93,14 @@ async def test_run_in_thread_raise_fn_exception(event_loop):
 
     slug = Slug(None, None)
     with pytest.raises(CustomException):
-        await slug.run_in_thread(fn)
+        await slug.run_in_thread(event_loop, fn)
 
 
 @pytest.mark.asyncio
 async def test_run_in_thread_calls_function_in_a_thread(event_loop):
     slug = Slug(None, None)
     this_thread = threading.currentThread()
-    other_thread = await slug.run_in_thread(threading.currentThread)
+    other_thread = await slug.run_in_thread(event_loop, threading.currentThread)
     assert this_thread != other_thread
 
 
@@ -111,7 +111,7 @@ async def test_attach_resources_waits_for_resources(event_loop):
         return {}
     with patch('brainslug.utils.wait_for_resources') as wait_for_resources:
         wait_for_resources.return_value = _wait_for_resources()
-        await slug.attach_resources()
+        await slug.attach_resources(event_loop)
         wait_for_resources.assert_called_once()
 
 
@@ -128,7 +128,7 @@ async def test_attach_resources_return_fn_wrapped(event_loop):
     slug = Slug(fn, None)
     with patch('brainslug.utils.wait_for_resources') as wait_for_resources:
         wait_for_resources.return_value = _wait_for_resources()
-        wrapped = await slug.attach_resources()
+        wrapped = await slug.attach_resources(event_loop)
         wrapped()
         assert called
 
