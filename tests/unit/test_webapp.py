@@ -39,3 +39,15 @@ async def test_channel_must_call_par(aiohttp_client, loop):
         resp = await cli.post('/channel/powershell/pepe')
         assert resp.status == 200, "channel endpoint must respond"
         par_mock.assert_called_once()
+
+
+async def test_channel_must_call_par_with_correct_arguments(aiohttp_client, loop):
+    app = aiohttp.web.Application()
+    with unittest.mock.patch('brainslug.webapp.process_agent_request') as par_mock:
+        par_mock.return_value = asyncio.sleep(0)
+        webapp.config_routes(app)
+        cli = await aiohttp_client(app)
+        resp = await cli.post('/channel/powershell/pepe')
+        assert resp.status == 200, "channel endpoint must respond"
+        par_mock.assert_called_once()
+        par_mock.assert_called_once_with("powershell", "pepe", None, None)
