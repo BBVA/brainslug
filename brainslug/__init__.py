@@ -105,3 +105,6 @@ class Slug:
     async def run(self):
         prepared = await self.attach_resources()
         return await self.run_in_thread(prepared)
+
+
+run_web_server = None
