@@ -18,5 +18,6 @@ async def channel_input(request):
     except KeyError:
         raise web.HTTPNotFound()
     key = request.match_info['__key__']
-    await process_agent_request(lang, key, None, None)
+    meta = dict(request.rel_url.query)
+    await process_agent_request(lang, key, meta, None)
     return web.Response()
