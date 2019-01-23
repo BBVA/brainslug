@@ -1,5 +1,5 @@
 #!/bin/bash
 set -e
 
-pytest -vv --doctest-modules brainslug tests
-pycodestyle brainslug
+pipenv run pytest -vv --doctest-modules brainslug tests
+pipenv run pycodestyle brainslug
