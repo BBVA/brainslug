@@ -101,3 +101,7 @@ class Slug:
                                                    CHANNELS,
                                                    self.spec)
         return functools.partial(self.fn, **resources)
+
+    async def run(self):
+        prepared = await self.attach_resources()
+        return await self.run_in_thread(prepared)

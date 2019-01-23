@@ -131,3 +131,32 @@ async def test_attach_resources_return_fn_wrapped(event_loop):
         wrapped = await slug.attach_resources()
         wrapped()
         assert called
+
+
+@pytest.mark.asyncio
+@pytest.mark.integration
+async def test_run_runs_the_slug_in_a_thread_with_resources(event_loop):
+    from brainslug import ChannelStorage, Brain
+    resource = object()
+    called = None
+
+    class Language:
+        def __new__(cls, *args, **kwargs):
+            return resource
+
+    @Slug.create(res=Brain.foo == 'bar')
+    def fn(res):
+        nonlocal called
+        called = True
+        assert res is resource
+        return threading.currentThread()
+
+    with patch('brainslug.CHANNELS', ChannelStorage()) as CHANNELS:
+        await CHANNELS.insert({'__language__': Language,
+                               '__channel__': None,
+                               'foo': 'bar'})
+        thread_id = await fn.run()
+
+        assert called
+        assert thread_id is not None
+        assert thread_id is not threading.currentThread()
