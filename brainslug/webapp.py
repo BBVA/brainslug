@@ -3,16 +3,21 @@ import asyncio
 from aiohttp import web
 
 from brainslug.languages import LANGUAGES
+from brainslug import channel
 
 
 def config_routes(app):
     app.add_routes([
-            web.post('/channel/{__language__}/{__key__}', channel_input)
+        web.post('/channel/{__language__}/{__key__}', channel_input)
     ])
 
 
 async def process_agent_request(language, key, meta, last_result):
-    pass
+    document = meta.copy()
+    document['__key__'] = key
+    document['__language__'] = language
+    document['__channel__'] = channel.Channel()
+    await channel.CHANNELS.insert(document)
 
 
 async def channel_input(request):
@@ -23,8 +28,8 @@ async def channel_input(request):
     key = request.match_info['__key__']
     meta = dict(request.rel_url.query)
     last_result = await request.read()
-    await process_agent_request(lang, key, meta, last_result)
-    return web.Response()
+    next_code = await process_agent_request(lang, key, meta, last_result)
+    return web.Response(body=next_code)
 
 
 async def run_web_server():

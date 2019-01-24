@@ -81,7 +81,7 @@ async def test_channel_input_must_retrieve_custom_metadata(aiohttp_client, loop,
             
 
 @given(payload=st.binary())
-def test_channel_input_must_recieve_last_result(aiohttp_client, loop, cli, payload):
+def test_channel_input_must_receive_last_result(aiohttp_client, loop, cli, payload):
     async def _test():
         current_langs = {
             "powershell": "powershell_lang"
@@ -94,3 +94,19 @@ def test_channel_input_must_recieve_last_result(aiohttp_client, loop, cli, paylo
                 assert resp.status == 200, "response must be Ok"
                 process_agent_request.assert_called_once_with("powershell_lang", "pepe", {}, payload)
     loop.run_until_complete(_test())
+
+
+async def test_channel_input_must_retrieve_custom_metadata(aiohttp_client, loop, cli):
+    current_langs = {
+        "powershell": "powershell_lang"
+    }
+
+    result = object()
+    async def _process_agent_request():
+        return str(id(result)).encode('ascii')
+
+    with patch('brainslug.webapp.process_agent_request') as process_agent_request:
+        with patch.dict('brainslug.languages.LANGUAGES', current_langs):
+            process_agent_request.return_value = _process_agent_request()
+            resp = await cli.post('/channel/powershell/pepe')
+            assert await resp.read() == str(id(result)).encode('ascii')
