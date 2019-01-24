@@ -41,6 +41,17 @@ async def test_channel_call_first_step_if_not_exists(event_loop):
             first_step.assert_called_once()
 
 
-# TODO: next_step if channel exists
+@pytest.mark.asyncio
+async def test_channel_call_next_step_if_not_exists(event_loop):
+    last_result = object()
+    with patch('brainslug.channel.CHANNELS', new=ChannelStorage()) as CHANNELS: 
+        with patch('brainslug.channel.Channel.next_step') as next_step:
+            next_step.return_value = asyncio.sleep(0)
+            await CHANNELS.insert({'__key__': None, '__channel__': Channel()})
+            await process_agent_request(None, None, {}, last_result)
+            next_step.assert_called_once_with(last_result)
+    
+
+
 # TODO: check next_code when channel exists
 # TODO: check next_code when channel not exists

@@ -1,6 +1,7 @@
 import asyncio
 
 from aiohttp import web
+from tinydb import Query
 
 from brainslug.languages import LANGUAGES
 from brainslug import channel
@@ -13,12 +14,18 @@ def config_routes(app):
 
 
 async def process_agent_request(language, key, meta, last_result):
-    document = meta.copy()
-    document['__key__'] = key
-    document['__language__'] = language
-    document['__channel__'] = channel.Channel()
-    await channel.CHANNELS.insert(document)
-    await document['__channel__'].first_step()
+    Q = Query()
+    try:
+        [document] = channel.CHANNELS.search(Q['__key__'] == key)
+    except ValueError:
+        document = meta.copy()
+        document['__key__'] = key
+        document['__language__'] = language
+        document['__channel__'] = channel.Channel()
+        await channel.CHANNELS.insert(document)
+        await document['__channel__'].first_step()
+    else:
+        await document['__channel__'].next_step(last_result)
 
 
 async def channel_input(request):
