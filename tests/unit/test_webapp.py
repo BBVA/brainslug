@@ -28,9 +28,11 @@ async def test_channel_must_respond(aiohttp_client, loop, cli):
         "powershell": "powershell_lang"
     }
     
-    with patch.dict('brainslug.languages.LANGUAGES', current_langs):
-        resp = await cli.post('/channel/powershell/pepe')
-        assert resp.status == 200, "channel endpoint must respond"
+    with patch('brainslug.webapp.process_agent_request') as process_agent_request:
+        with patch.dict('brainslug.languages.LANGUAGES', current_langs):
+            process_agent_request.return_value = asyncio.sleep(0)
+            resp = await cli.post('/channel/powershell/pepe')
+            assert resp.status == 200, "channel endpoint must respond"
 
 
 async def test_channel_must_call_par(aiohttp_client, loop, cli):
