@@ -1,5 +1,6 @@
 import pkg_resources
 
+
 def generate_banner():
     distribution = pkg_resources.get_distribution('brainslug')
     version = f'v{distribution.version}'
@@ -8,4 +9,4 @@ def generate_banner():
  |   __ .----.---.-|__.-----|     __|  .--.--.-----.
  |   __ |   _|  _  |  |     |__     |  |  |  |  _  |
  |______|__| |___._|__|__|__|_______|__|_____|___  |"""
-                        f"\n{version: >42}   |_____|")
+            f"            \n{version: >42}   |_____|")
