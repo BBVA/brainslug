@@ -25,7 +25,7 @@ async def process_agent_request(language, key, meta, last_result):
         await channel.CHANNELS.insert(document)
         return await document['__channel__'].first_step()
     else:
-        await document['__channel__'].next_step(last_result)
+        return await document['__channel__'].next_step(last_result)
 
 
 async def channel_input(request):
