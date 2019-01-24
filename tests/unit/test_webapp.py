@@ -1,8 +1,12 @@
-from brainslug import webapp
+from unittest.mock import patch
 import asyncio
+
+from hypothesis import given
+from hypothesis import strategies as st
 import aiohttp
 import pytest
-from unittest.mock import patch
+
+from brainslug import webapp
 
 
 def test_config_routes_is_a_function():
@@ -52,13 +56,12 @@ async def test_channel_must_call_par_with_correct_arguments(aiohttp_client, loop
             process_agent_request.return_value = asyncio.sleep(0)
             resp = await cli.post('/channel/powershell/pepe')
             assert resp.status == 200, "channel endpoint must respond"
-            process_agent_request.assert_called_once_with("powershell_lang", "pepe", {}, None)
+            process_agent_request.assert_called_once_with("powershell_lang", "pepe", {}, b'')
 
 
 async def test_channel_input_must_call_par_with_correct_language(aiohttp_client, loop, cli):
     with patch('brainslug.webapp.process_agent_request') as process_agent_request:
         with patch.dict('brainslug.languages.LANGUAGES', {}):
-            process_agent_request.return_value = asyncio.sleep(0)
             resp = await cli.post('/channel/java/pepe')
             assert resp.status == 404, "language must not exists"
             process_agent_request.assert_not_called()
@@ -74,17 +77,20 @@ async def test_channel_input_must_retrieve_custom_metadata(aiohttp_client, loop,
             process_agent_request.return_value = asyncio.sleep(0)
             resp = await cli.post('/channel/powershell/pepe?custom=true')
             assert resp.status == 200, "response must be Ok"
-            process_agent_request.assert_called_once_with("powershell_lang", "pepe", {"custom":"true"}, None)
+            process_agent_request.assert_called_once_with("powershell_lang", "pepe", {"custom":"true"}, b'')
             
 
-async def test_channel_input_must_recieve_last_result(aiohttp_client, loop, cli):
-    current_langs = {
-        "powershell": "powershell_lang"
-    }
+@given(payload=st.binary())
+def test_channel_input_must_recieve_last_result(aiohttp_client, loop, cli, payload):
+    async def _test():
+        current_langs = {
+            "powershell": "powershell_lang"
+        }
 
-    with patch('brainslug.webapp.process_agent_request') as process_agent_request:
-        with patch.dict('brainslug.languages.LANGUAGES', current_langs):
-            process_agent_request.return_value = asyncio.sleep(0)
-            resp = await cli.post('/channel/powershell/pepe', data="something")
-            assert resp.status == 200, "response must be Ok"
-            process_agent_request.assert_called_once_with("powershell_lang", "pepe", {}, b'something')
+        with patch('brainslug.webapp.process_agent_request') as process_agent_request:
+            with patch.dict('brainslug.languages.LANGUAGES', current_langs):
+                process_agent_request.return_value = asyncio.sleep(0)
+                resp = await cli.post('/channel/powershell/pepe', data=payload)
+                assert resp.status == 200, "response must be Ok"
+                process_agent_request.assert_called_once_with("powershell_lang", "pepe", {}, payload)
+    loop.run_until_complete(_test())
