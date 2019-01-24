@@ -4,7 +4,7 @@ import inspect
 from tinydb import TinyDB, Query
 import pytest
 
-from brainslug import ChannelStorage
+from brainslug.channel import ChannelStorage
 
 
 def testis_a_class():

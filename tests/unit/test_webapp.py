@@ -67,7 +67,7 @@ async def test_channel_must_call_par_with_correct_arguments(aiohttp_client, loop
 async def test_channel_input_must_call_par_with_correct_language(aiohttp_client, loop):
     app = aiohttp.web.Application()
     with patch('brainslug.webapp.process_agent_request') as process_agent_request:
-        with patch.dict('brainslug.LANGUAGES', {}):
+        with patch.dict('brainslug.languages.LANGUAGES', {}):
             process_agent_request.return_value = asyncio.sleep(0)
             webapp.config_routes(app)
             cli = await aiohttp_client(app)

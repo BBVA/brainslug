@@ -3,11 +3,11 @@ import asyncio
 import inspect
 import pytest
 
-from brainslug import Channel
+from brainslug.channel import Channel
 
 
 def test_channel_is_a_class():
-    from brainslug import Channel
+    from brainslug.channel import Channel
     assert inspect.isclass(Channel)
 
 

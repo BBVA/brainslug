@@ -6,7 +6,8 @@ from unittest.mock import patch
 
 import pytest
 
-from brainslug import Slug
+from brainslug._slug import Slug
+from brainslug import Brain
 
 
 def test_slug_is_a_class():
@@ -136,7 +137,7 @@ async def test_attach_resources_return_fn_wrapped(event_loop):
 @pytest.mark.asyncio
 @pytest.mark.integration
 async def test_run_runs_the_slug_in_a_thread_with_resources(event_loop):
-    from brainslug import ChannelStorage, Brain
+    from brainslug.channel import ChannelStorage
     resource = object()
     called = None
 
@@ -151,7 +152,7 @@ async def test_run_runs_the_slug_in_a_thread_with_resources(event_loop):
         assert res is resource
         return threading.currentThread()
 
-    with patch('brainslug.CHANNELS', ChannelStorage()) as CHANNELS:
+    with patch('brainslug.channel.CHANNELS', ChannelStorage()) as CHANNELS:
         await CHANNELS.insert({'__language__': Language,
                                '__channel__': None,
                                'foo': 'bar'})

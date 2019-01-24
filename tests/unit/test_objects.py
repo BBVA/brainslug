@@ -4,20 +4,20 @@ import pytest
 
 
 @pytest.mark.parametrize('module_name, name',
-                         [('brainslug', 'Channel'),
-                          ('brainslug', 'CHANNELS'),
+                         [('brainslug', 'Brain'),
+                          ('brainslug.channel', 'Channel'),
+                          ('brainslug.channel', 'CHANNELS'),
+                          ('brainslug.channel', 'ChannelStorage'),
+                          ('brainslug.channel', 'SyncedVar'),
                           ('brainslug.languages', 'LANGUAGES'),
-                          ('brainslug', 'ChannelStorage'),
-                          ('brainslug.utils', 'SyncedVar'),
-                          ('brainslug.utils', 'to_remote'),
+                          ('brainslug._slug', 'run_slug'),
+                          ('brainslug._slug', 'Slug'),
                           ('brainslug.utils', 'get_resources'),
+                          ('brainslug.utils', 'to_remote'),
                           ('brainslug.utils', 'wait_for_resources'),
-                          ('brainslug', 'Brain'),
-                          ('brainslug', 'run_web_server'),
-                          ('brainslug', 'run_slug'),
-                          ('brainslug.webapp', 'process_agent_request'),
                           ('brainslug.webapp', 'config_routes'),
-                          ('brainslug', 'Slug')])
+                          ('brainslug.webapp', 'process_agent_request'),
+                          ('brainslug.webapp', 'run_web_server')])
 def test_object_is_importable(module_name, name):
     try:
         module = importlib.import_module(module_name)
@@ -29,7 +29,7 @@ def test_object_is_importable(module_name, name):
 
 
 def test_channels_is_a_tinydb_instance():
-    from brainslug import CHANNELS, ChannelStorage
+    from brainslug.channel import CHANNELS, ChannelStorage
     assert isinstance(CHANNELS, ChannelStorage)
 
 

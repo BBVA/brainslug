@@ -8,7 +8,8 @@ from hypothesis import given
 from hypothesis import strategies as st
 import pytest
 
-from brainslug import ChannelStorage, Brain
+from brainslug import Brain
+from brainslug.channel import ChannelStorage
 from brainslug.utils import get_resources
 from brainslug.utils import to_remote
 from brainslug.utils import wait_for_resources

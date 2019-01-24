@@ -2,7 +2,7 @@ import asyncio
 
 import pytest
 
-from brainslug.utils import SyncedVar
+from brainslug.channel import SyncedVar
 
 
 def test_syncedvar_is_a_data_descriptor():
