@@ -110,7 +110,7 @@ async def test_attach_resources_waits_for_resources(event_loop):
     slug = Slug(lambda:None, None)
     async def _wait_for_resources():
         return {}
-    with patch('brainslug.utils.wait_for_resources') as wait_for_resources:
+    with patch('brainslug.util.wait_for_resources') as wait_for_resources:
         wait_for_resources.return_value = _wait_for_resources()
         await slug.attach_resources(event_loop)
         wait_for_resources.assert_called_once()
@@ -127,7 +127,7 @@ async def test_attach_resources_return_fn_wrapped(event_loop):
     async def _wait_for_resources():
         return {'arg': resources}
     slug = Slug(fn, None)
-    with patch('brainslug.utils.wait_for_resources') as wait_for_resources:
+    with patch('brainslug.util.wait_for_resources') as wait_for_resources:
         wait_for_resources.return_value = _wait_for_resources()
         wrapped = await slug.attach_resources(event_loop)
         wrapped()

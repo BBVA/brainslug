@@ -3,7 +3,7 @@ import functools
 
 from concurrent.futures import ThreadPoolExecutor
 
-from brainslug import utils
+from brainslug import util
 from brainslug import webapp
 from brainslug import channel
 
@@ -25,9 +25,9 @@ class Slug:
         return await loop.run_in_executor(executor, fn)
 
     async def attach_resources(self, loop):
-        resources = await utils.wait_for_resources(loop,
-                                                   channel.CHANNELS,
-                                                   self.spec)
+        resources = await util.wait_for_resources(loop,
+                                                  channel.CHANNELS,
+                                                  self.spec)
         return functools.partial(self.fn, **resources)
 
     async def run(self):

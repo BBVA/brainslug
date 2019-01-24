@@ -12,9 +12,9 @@ import pytest
                           ('brainslug.languages', 'LANGUAGES'),
                           ('brainslug._slug', 'run_slug'),
                           ('brainslug._slug', 'Slug'),
-                          ('brainslug.utils', 'get_resources'),
-                          ('brainslug.utils', 'to_remote'),
-                          ('brainslug.utils', 'wait_for_resources'),
+                          ('brainslug.util', 'get_resources'),
+                          ('brainslug.util', 'to_remote'),
+                          ('brainslug.util', 'wait_for_resources'),
                           ('brainslug.webapp', 'config_routes'),
                           ('brainslug.webapp', 'process_agent_request'),
                           ('brainslug.webapp', 'run_web_server')])

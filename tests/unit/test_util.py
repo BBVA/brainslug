@@ -10,9 +10,9 @@ import pytest
 
 from brainslug import Brain
 from brainslug.channel import ChannelStorage
-from brainslug.utils import get_resources
-from brainslug.utils import to_remote
-from brainslug.utils import wait_for_resources
+from brainslug.util import get_resources
+from brainslug.util import to_remote
+from brainslug.util import wait_for_resources
 
 
 @pytest.mark.asyncio
@@ -65,7 +65,7 @@ async def test_get_resources_calls_to_remote_for_each_doc_found(keys, event_loop
         await store.insert({key: key})
 
     spec = {k: Brain[k] == k for k in keys}
-    with patch('brainslug.utils.to_remote') as to_remote:
+    with patch('brainslug.util.to_remote') as to_remote:
         get_resources(event_loop, store, spec)
         assert to_remote.call_count == len(keys)
 
@@ -84,14 +84,14 @@ async def test_get_resources_calls_to_remote_and_returns_in_dict_value(keys, eve
         for k in doc:
             return k
 
-    with patch('brainslug.utils.to_remote', _to_remote) as to_remote:
+    with patch('brainslug.util.to_remote', _to_remote) as to_remote:
         resources = get_resources(event_loop, store, spec)
         assert resources == {k: k for k in keys}
 
 
 async def test_wait_for_resources_return_resources(event_loop):
     resources = object()
-    with patch('brainslug.utils.get_resources') as get_resources:
+    with patch('brainslug.util.get_resources') as get_resources:
         get_resources.return_value = resources
 
         assert await wait_for_resources(event_loop, None, None) is resources
@@ -103,7 +103,7 @@ async def test_wait_for_resources_hangs_if_no_resources(event_loop):
         wait_for_new_channel = staticmethod(lambda: asyncio.sleep(0))
     spec = {'foo': Brain['foo'] == 'bar'}
 
-    with patch('brainslug.utils.get_resources') as get_resources:
+    with patch('brainslug.util.get_resources') as get_resources:
         get_resources.side_effect = itertools.repeat(None)
 
         with pytest.raises(asyncio.TimeoutError):
@@ -120,7 +120,7 @@ async def test_wait_for_resources_calls_wait_for_every_failed_get_resources(even
     store.wait_for_new_channel.side_effect = lambda: asyncio.sleep(0)
     spec = {'foo': Brain['foo'] == 'bar'}
     result = {'foo': object()}
-    with patch('brainslug.utils.get_resources') as get_resources:
+    with patch('brainslug.util.get_resources') as get_resources:
         get_resources.side_effect = itertools.chain(
             itertools.repeat(None, num_fails),
             [result])
