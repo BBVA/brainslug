@@ -15,13 +15,13 @@ async def process_events(websocket, remote):
             message = json.loads(message.data)
             if message['type'] == 'click':
                 # TODO: remote click
-                pass
-            elif message['type'] == 'move':
+                print("click", message['x'], message['y'])
+            elif message['type'] == 'mousemove':
                 # TODO: mouse move
-                print("move", message['x'], message['y'])
-            elif message['type'] == 'key':
+                print("mousemove", message['x'], message['y'])
+            elif message['type'] == 'keypress':
                 # TODO: send key
-                pass
+                print("keypress", message['k'])
             else:
                 raise TypeError('Unknown message type %r' %
                                 message['type'])

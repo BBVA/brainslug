@@ -3,7 +3,7 @@
 
 <body>
 
-<canvas id="remotescreen" style="border:1px solid #000000;">
+<canvas id="remotescreen" tabindex='1' style="border:1px solid #000000;">
 Your browser does not support the HTML5 canvas tag.
 </canvas>
 
@@ -33,6 +33,7 @@ Your browser does not support the HTML5 canvas tag.
     };
     image.src = "data:image/png;base64," + evt.data;
   }
+
   function getMousePos(canvas, evt) {
     var rect = canvas.getBoundingClientRect();
     return {
@@ -40,15 +41,38 @@ Your browser does not support the HTML5 canvas tag.
       y: Math.floor((evt.clientY - rect.top) * remoteHeight / canvas.height)
     };
   }
+
   canvas.addEventListener("mousemove", function(evt) {
     var mousePos = getMousePos(canvas, evt);
     websocket.send(
       JSON.stringify({
-        type: "move",
+        type: "mousemove",
         x: mousePos.x,
         y: mousePos.y
       })
     );
   }, false);
+
+  canvas.addEventListener("keypress", function(evt) {
+    websocket.send(
+      JSON.stringify({
+        type: "keypress",
+        k: evt.key
+      })
+    );
+  }, false);
+
+  canvas.addEventListener("click", function(evt) {
+    var mousePos = getMousePos(canvas, evt);
+    websocket.send(
+      JSON.stringify({
+        type: "click",
+        x: mousePos.x,
+        y: mousePos.y
+      })
+    );
+  }, false);
+
+
 </script>
 </html>
