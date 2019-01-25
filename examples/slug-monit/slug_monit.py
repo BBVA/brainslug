@@ -7,6 +7,8 @@ from livereload import Server
 
 
 def start_server():
+    import asyncio
+    asyncio.set_event_loop(asyncio.new_event_loop())
     s = Server()
     s.watch("*.json")
     s.serve()
@@ -14,8 +16,8 @@ def start_server():
 
 @slug(remote=Brain.platform == 'linux')
 def slug_monit(remote):
-    t = threading.Thread(target=start_server())
-    t.run()
+    t = threading.Thread(target=start_server)
+    t.start()
     while True:
         info = {
                 "cpu": remote.psutil.cpu_percent(interval=1),
@@ -31,6 +33,6 @@ def slug_monit(remote):
                 }
         print(info)
         time.sleep(1)
-        
+
 
 run_locally(slug_monit)
