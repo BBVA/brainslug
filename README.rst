@@ -1,4 +1,5 @@
 .. image:: https://gitlab.com/robertomartinezp/brain-slug/raw/master/assets/images/brainslug.svg
+  :align: center
 
 Universal Zombie Control Interface
 
