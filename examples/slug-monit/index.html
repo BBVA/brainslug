@@ -4,10 +4,27 @@
   <meta charset="UTF-8">
   <title>Monitorización</title>
   <script src="https://momentjs.com/downloads/moment.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css?family=Press+Start+2P&subset=latin-ext');
+
+    body {
+      font-family: 'Press Start 2P', cursive;
+    }
+  </style>
 </head>
 <body>
   <script type="module">
     import {html, render} from 'https://unpkg.com/lit-html?module';
+
+    const color = (num) => {
+      if(num < 0.4) {
+        return "#28d102";
+      }else if (num < 0.8) {
+        return "#ffdd00";
+      }else{
+        return "#c40909";
+      }
+    }
 
     const polar_to_cartesian = (cx, cy, radius, angle) => {
       var radians;
@@ -42,10 +59,10 @@
       <h2>CPU</h2>
       <div>
         <svg viewBox="0 0 1000 500">
-          <path stroke-width="75" fill="none" stroke="#3498db" 
+          <path stroke-width="75" fill="none" stroke="${color(cpu/100)}" 
             d="${svg_arc_path(500, 500, 450, -90, (cpu/100) * 180.0 - 90)}">
           </path>
-          <text x="275" y="500" font-size="150">${cpu} %</text>
+          <text x="275" y="500" font-size="75">${cpu} %</text>
         </svg>
       </div>
       `;
@@ -57,11 +74,11 @@
       <h2>RAM (${formatBytes(total)})</h2>
       <div>
         <svg viewBox="0 0 1000 500">
-          <path stroke-width="75" fill="none" stroke="#3498db" 
+          <path stroke-width="75" fill="none" stroke="${color(memPercent)}" 
             d="${svg_arc_path(500, 500, 450, -90, memPercent * 180.0 - 90)}">
           </path>
           <text x="480" y="350" font-size="42">${memPercent.toFixed(2)} %</text>
-          <text x="275" y="470" font-size="150">${formatBytes(mem)}</text>
+          <text x="275" y="470" font-size="75">${formatBytes(mem)}</text>
         </svg>
       </div>
       `;
@@ -79,7 +96,7 @@
       return html`
       <h2>HDD</h2>
         <svg viewBox="0 0 1000 200">
-          <rect x="0" y="0" width="${(disk/100)*500}" height="75"></rect>
+          <rect x="0" y="0" width="${(disk/100)*500}" height="75" fill="${color(disk/100)}"></rect>
           <text x="${(disk/100)*1000+5}" y="50" font-size="42">${disk} %</text>
           <text x="0" y="120" font-size="42">${formatBytes(total)}</text>
         </svg>
