@@ -1,5 +1,4 @@
-Brain Slug
-==========
+.. image:: assets/images/brainslug.svg
 
 Universal Zombie Control Interface
 
