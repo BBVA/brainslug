@@ -12,6 +12,8 @@ Your browser does not support the HTML5 canvas tag.
 <script language="javascript" type="text/javascript">
   canvas = document.getElementById("remotescreen");
   context = canvas.getContext('2d');
+  remoteWidth = undefined;
+  remoteHeight = undefined;
 
   websocket = new WebSocket("ws://" + window.location.host + window.location.pathname + "ws");
   // websocket.onopen = function(evt) { onOpen(evt) };
@@ -26,11 +28,27 @@ Your browser does not support the HTML5 canvas tag.
     var image = new Image();
     image.onload = function(){
       context.drawImage(image,0,0,canvas.width,canvas.height);
+      remoteWidth = image.width;
+      remoteHeight = image.height;
     };
     image.src = "data:image/png;base64," + evt.data;
-
   }
-
-
+  function getMousePos(canvas, evt) {
+    var rect = canvas.getBoundingClientRect();
+    return {
+      x: Math.floor((evt.clientX - rect.left) * remoteWidth / canvas.width),
+      y: Math.floor((evt.clientY - rect.top) * remoteHeight / canvas.height)
+    };
+  }
+  canvas.addEventListener("mousemove", function(evt) {
+    var mousePos = getMousePos(canvas, evt);
+    websocket.send(
+      JSON.stringify({
+        type: "move",
+        x: mousePos.x,
+        y: mousePos.y
+      })
+    );
+  }, false);
 </script>
 </html>

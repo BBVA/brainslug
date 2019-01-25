@@ -1,23 +1,24 @@
+from aiohttp import web
 from brainslug import run_locally
 from brainslug import slug, Brain
-import aiohttp
-import base64
-import asyncio
-from aiohttp import web
 from functools import partial
+import aiohttp
+import asyncio
+import base64
+import json
 import mss
 
 
 async def process_events(websocket, remote):
     async for message in websocket:
         if message.type == aiohttp.WSMsgType.TEXT:
-            message = json.loads(message)
+            message = json.loads(message.data)
             if message['type'] == 'click':
                 # TODO: remote click
                 pass
             elif message['type'] == 'move':
                 # TODO: mouse move
-                pass
+                print("move", message['x'], message['y'])
             elif message['type'] == 'key':
                 # TODO: send key
                 pass
@@ -53,8 +54,6 @@ def remotedesktop(remote):
         web.get('/ws', partial(manage_websocket, remote))
     ])
     web.run_app(app)
-    # shot = ()
-    # shot.show()
 
 
 if __name__ == '__main__':
