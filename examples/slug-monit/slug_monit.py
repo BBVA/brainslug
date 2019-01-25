@@ -1,3 +1,4 @@
+import json
 import time
 import threading
 
@@ -18,10 +19,12 @@ def start_server():
 def slug_monit(remote):
     t = threading.Thread(target=start_server)
     t.start()
+    print("server start on port 5500")
     while True:
-        info = {
+        info = [{
+                "name": "remote",
                 "cpu": remote.psutil.cpu_percent(interval=1),
-                "mem": remote.psutil.virtual_memory().percent,
+                "mem": remote.psutil.virtual_memory().used,
                 "disk": remote.psutil.disk_usage("/").percent,
                 "net_in": remote.psutil.net_io_counters().bytes_recv,
                 "net_out": remote.psutil.net_io_counters().bytes_sent,
@@ -30,8 +33,21 @@ def slug_monit(remote):
                         "disk": remote.psutil.disk_usage("/").total,
                         "uptime": remote.psutil.boot_time()
                     }
-                }
-        print(info)
+                },{
+                "name": "other",
+                "cpu": remote.psutil.cpu_percent(interval=1),
+                "mem": remote.psutil.virtual_memory().used,
+                "disk": remote.psutil.disk_usage("/").percent,
+                "net_in": remote.psutil.net_io_counters().bytes_recv,
+                "net_out": remote.psutil.net_io_counters().bytes_sent,
+                "totals":{
+                        "mem": remote.psutil.virtual_memory().total,
+                        "disk": remote.psutil.disk_usage("/").total,
+                        "uptime": remote.psutil.boot_time()
+                    }
+                }]
+        with open("monit.json", "w") as fil:
+            json.dump(info, fil)
         time.sleep(1)
 
 

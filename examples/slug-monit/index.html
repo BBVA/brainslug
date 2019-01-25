@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Monitorización</title>
+  <script src="https://momentjs.com/downloads/moment.min.js"></script>
+</head>
+<body>
+  <script type="module">
+    import {html, render} from 'https://unpkg.com/lit-html?module';
+
+    const polar_to_cartesian = (cx, cy, radius, angle) => {
+      var radians;
+      radians = (angle - 90) * Math.PI / 180.0;
+      return [Math.round((cx + (radius * Math.cos(radians))) * 100) / 100, Math.round((cy + (radius * Math.sin(radians))) * 100) / 100];
+    };
+
+    const svg_arc_path = (x, y, radius, start_angle, end_angle) => {
+      var end_xy, start_xy;
+      start_xy = polar_to_cartesian(x, y, radius, end_angle);
+      end_xy = polar_to_cartesian(x, y, radius, start_angle);
+      return "M " + start_xy[0] + " " + start_xy[1] + " A " + radius + " " + radius + " 0 0 0 " + end_xy[0] + " " + end_xy[1];
+    };
+
+    const formatBytes = (bytes) => {
+      var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+      if (bytes == 0) return '0 Byte';
+      var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+      return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+    }
+
+    const formatSeconds = (seconds) => {
+      let m = moment(""+seconds, "X");
+      let now = moment();
+      let difference = now.diff(m);
+      let res = moment.utc(difference).format("HH:mm:ss");
+      return res; 
+    }
+
+    const renderCPU = (cpu) => {
+      return html`
+      <h2>CPU</h2>
+      <div>
+        <svg viewBox="0 0 1000 500">
+          <path stroke-width="75" fill="none" stroke="#3498db" 
+            d="${svg_arc_path(500, 500, 450, -90, (cpu/100) * 180.0 - 90)}">
+          </path>
+          <text x="275" y="500" font-size="150">${cpu} %</text>
+        </svg>
+      </div>
+      `;
+    }
+
+    const renderRAM = (mem, total) => {
+      let memPercent = mem / total;
+      return html`
+      <h2>RAM (${formatBytes(total)})</h2>
+      <div>
+        <svg viewBox="0 0 1000 500">
+          <path stroke-width="75" fill="none" stroke="#3498db" 
+            d="${svg_arc_path(500, 500, 450, -90, memPercent * 180.0 - 90)}">
+          </path>
+          <text x="480" y="350" font-size="42">${memPercent.toFixed(2)} %</text>
+          <text x="275" y="470" font-size="150">${formatBytes(mem)}</text>
+        </svg>
+      </div>
+      `;
+    }
+
+    const renderNet = (net_in, net_out) => {
+      return html`
+      <h2>NET</h2>
+      <h2>Inbound: ${formatBytes(net_in)}</h2> 
+      <h2>Outbound: ${formatBytes(net_out)}</h2> 
+      `;
+    }
+
+    const renderHDD = (disk, total) => {
+      return html`
+      <h2>HDD</h2>
+        <svg viewBox="0 0 1000 200">
+          <rect x="0" y="0" width="${(disk/100)*500}" height="75"></rect>
+          <text x="${(disk/100)*1000+5}" y="50" font-size="42">${disk} %</text>
+          <text x="0" y="120" font-size="42">${formatBytes(total)}</text>
+        </svg>
+      `;
+    }
+
+    const agent = (current) => {
+      return html`
+      <div>
+        <h1>${current.name}</h1>
+        <b>uptime: </b>${formatSeconds(current.totals.uptime)} 
+        ${renderCPU(current.cpu)}
+        ${renderRAM(current.mem, current.totals.mem)}
+        ${renderNet(current.net_in, current.net_out)}
+        ${renderHDD(current.disk, current.totals.disk)}
+      </div>
+      `;
+    }
+    
+    const computers = (data) => {
+      return html`
+      <style>
+        .cont {
+          display: grid;
+          grid-column-gap: 15px;
+          grid-template-columns: repeat(${data.length}, 1fr);
+        }
+        .cont > div {
+          border: 1px solid #000000;
+          border-radius: 15px;
+          padding: 5px;
+        }
+      </style>
+      <div class="cont">
+        ${data.map(agent)}
+      </div>
+      `;
+    }
+
+    let xhr = new XMLHttpRequest();
+    xhr.open("GET", "monit.json", true);
+    xhr.responseType = "json";
+    xhr.onload = (ev) => {
+      let status = xhr.status;
+      if(status === 200){
+        render(computers(xhr.response), document.body);
+      }else{
+        console.error(xhr);
+      }
+    }
+    xhr.send();
+  </script>
+</body>
+</html>
