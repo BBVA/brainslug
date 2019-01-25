@@ -1,25 +1,24 @@
 import json
 import time
 import threading
+import http.server
+import socketserver
 
 from brainslug import slug, run_locally, Brain
 import psutil
-from livereload import Server
 
 
 def start_server():
-    import asyncio
-    asyncio.set_event_loop(asyncio.new_event_loop())
-    s = Server()
-    s.watch("*.json")
-    s.serve()
+    handler = http.server.SimpleHTTPRequestHandler
+    with socketserver.TCPServer(("", 5500), handler) as httpd:
+        print("server start on port 5500")
+        httpd.serve_forever()
 
 
 @slug(remote=Brain.platform == 'linux')
 def slug_monit(remote):
     t = threading.Thread(target=start_server)
     t.start()
-    print("server start on port 5500")
     while True:
         info = [{
                 "name": "remote",
@@ -48,7 +47,7 @@ def slug_monit(remote):
                 }]
         with open("monit.json", "w") as fil:
             json.dump(info, fil)
-        time.sleep(1)
+        time.sleep(5)
 
 
 run_locally(slug_monit)

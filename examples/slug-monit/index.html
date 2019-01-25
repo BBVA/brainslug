@@ -136,18 +136,22 @@
       `;
     }
 
-    let xhr = new XMLHttpRequest();
-    xhr.open("GET", "monit.json", true);
-    xhr.responseType = "json";
-    xhr.onload = (ev) => {
-      let status = xhr.status;
-      if(status === 200){
-        render(computers(xhr.response), document.body);
-      }else{
-        console.error(xhr);
+    const getData = () => {
+      let xhr = new XMLHttpRequest();
+      xhr.open("GET", "monit.json", true);
+      xhr.responseType = "json";
+      xhr.onload = (ev) => {
+        let status = xhr.status;
+        if(status === 200){
+          render(computers(xhr.response), document.body);
+        }else{
+          console.error(xhr);
+        }
       }
+      xhr.send();
     }
-    xhr.send();
+
+    setInterval(getData, 5000);
   </script>
 </body>
 </html>
