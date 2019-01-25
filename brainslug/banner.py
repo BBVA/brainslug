@@ -1,12 +1,17 @@
 import pkg_resources
+import colorama
 
 
 def generate_banner():
+    P = colorama.Fore.MAGENTA + colorama.Style.BRIGHT
+    G = colorama.Fore.GREEN + colorama.Style.NORMAL
+    R = colorama.Style.RESET_ALL
+    W = colorama.Fore.WHITE + colorama.Style.NORMAL
     distribution = pkg_resources.get_distribution('brainslug')
     version = f'v{distribution.version}'
     return (f"""
-  ______            __       _______ __
- |   __ .----.---.-|__.-----|     __|  .--.--.-----.
- |   __ |   _|  _  |  |     |__     |  |  |  |  _  |
- |______|__| |___._|__|__|__|_______|__|_____|___  |"""
-            f"            \n{version: >42}   |_____|")
+{P}  ______            __      {G} _______ __
+{P} |   __ .----.---.-|__.-----{G}|     __|  .--.--.-----.
+{P} |   __ |   _|  _  |  |     {G}|__     |  |  |  |  _  |
+{P} |______|__| |___._|__|__|__{G}|_______|__|_____|___  |"""
+            f"            {W}\n{version: >42}{G}   |_____|{R}")
