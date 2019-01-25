@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+
+<canvas id="remotescreen" style="border:1px solid #000000;">
+Your browser does not support the HTML5 canvas tag.
+</canvas>
+
+</body>
+
+<script language="javascript" type="text/javascript">
+  canvas = document.getElementById("remotescreen");
+  context = canvas.getContext('2d');
+
+  websocket = new WebSocket("ws://" + window.location.host + window.location.pathname + "ws");
+  // websocket.onopen = function(evt) { onOpen(evt) };
+  // websocket.onclose = function(evt) { onClose(evt) };
+  websocket.onmessage = function(evt) { onMessage(evt) };
+  // websocket.onerror = function(evt) { onError(evt) };
+
+  function onMessage(evt)
+  {
+    if (canvas.width != window.innerWidth) canvas.width = window.innerWidth;
+    if (canvas.height != window.innerHeight) canvas.height = window.innerHeight;
+    var image = new Image();
+    image.onload = function(){
+      context.drawImage(image,0,0,canvas.width,canvas.height);
+    };
+    image.src = "data:image/png;base64," + evt.data;
+
+  }
+
+
+</script>
+</html>
