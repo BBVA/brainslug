@@ -18,11 +18,11 @@ async def process_agent_request(language, key, meta, last_result):
     try:
         [document] = channel.CHANNELS.search(Q['__key__'] == key)
     except ValueError:
-        await channel.CHANNELS.insert(
-            {**meta,
-             '__key__': key,
-             '__language__': language,
-             '__channel__': channel.Channel()})
+        document = {**meta,
+                    '__key__': key,
+                    '__language__': language,
+                    '__channel__': channel.Channel()}
+        await channel.CHANNELS.insert(document)
         return await document['__channel__'].first_step()
     else:
         return await document['__channel__'].next_step(last_result)
