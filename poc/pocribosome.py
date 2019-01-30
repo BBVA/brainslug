@@ -59,13 +59,13 @@ class Remote:
         return set(_dir())
 
     def __getitem__(self, name):
-        return self.__ribosome__('__getitem__')(self.__root__, name)
+        return self.__ribosome__('getitem')(self.__root__, name)
 
     def __setitem__(self, name, value):
-        return self.__ribosome__('__setitem__')(self.__root__, name, value)
+        return self.__ribosome__('setitem')(self.__root__, name, value)
 
     def __delitem__(self, name):
-        return self.__ribosome__('__delitem__')(self.__root__, name)
+        return self.__ribosome__('delitem')(self.__root__, name)
 
     def __call__(self, *args, **kwargs):
         return self.__ribosome__()(self.__root__, *args, **kwargs)
@@ -74,7 +74,6 @@ class Remote:
 ribosome = Symbol()  # Declare symbols with decorators
 
 python  = ribosome.python
-
 
 @define(python.eval)
 def _(remote, code):
