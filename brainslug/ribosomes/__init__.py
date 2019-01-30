@@ -1,9 +1,13 @@
 RIBOSOMES = dict()
 
 
-def define():
+def define(symbol):
     def _decorated(fn):
-        return fn
+        if symbol in RIBOSOMES:
+            raise ValueError("Cannot define ribosome twice")
+        else:
+            RIBOSOMES[symbol] = fn
+            return fn
     return _decorated
 
 
