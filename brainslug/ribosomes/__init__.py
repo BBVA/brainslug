@@ -42,8 +42,8 @@ class Remote:
         return RIBOSOMES[self.__symbol__ + ('getitem', )](self.__root__, name)
 
     def __setitem__(self, name, value):
-        return RIBOSOMES[self.__symbol__
-                         + ('setitem',)](self.__root__, name, value)
+        return RIBOSOMES[self.__symbol__+('setitem',)](self.__root__,
+                                                       name, value)
 
     def __delitem__(self, name):
         return RIBOSOMES[self.__symbol__ + ('delitem', )](self.__root__, name)
