@@ -6,12 +6,13 @@ from brainslug.ribosomes import define
 
 
 def test_define_is_decorator():
-    result = object()
+    with patch.dict("brainslug.ribosomes.RIBOSOMES"):
+        result = object()
 
-    @define(None)
-    def decorated():
-        return result
-    assert decorated() is result
+        @define(tuple())
+        def decorated():
+            return result
+        assert decorated() is result
 
 
 def test_define_needs_symbol():
@@ -23,7 +24,7 @@ def test_define_needs_symbol():
 
 def test_define_registers_ribosome():
     with patch.dict("brainslug.ribosomes.RIBOSOMES"):
-        symbol = object()
+        symbol = tuple()
 
         @define(symbol)
         def decorated():
@@ -35,7 +36,7 @@ def test_define_registers_ribosome():
 
 def test_define_cant_register_ribosome_twice():
     with patch.dict("brainslug.ribosomes.RIBOSOMES"):
-        symbol = object()
+        symbol = tuple()
 
         @define(symbol)
         def decorated():
@@ -45,3 +46,13 @@ def test_define_cant_register_ribosome_twice():
             @define(symbol)
             def other_decorated():
                 pass
+
+
+def test_define_cant_register_dunder_symbols():
+    symbol = ("__str__", )
+
+    with pytest.raises(ValueError):
+        @define(symbol)
+        def other_decorated():
+            pass
+

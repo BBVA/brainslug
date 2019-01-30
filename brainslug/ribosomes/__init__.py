@@ -3,7 +3,11 @@ RIBOSOMES = dict()
 
 def define(symbol):
     def _decorated(fn):
-        if symbol in RIBOSOMES:
+        def is_dunder(s):
+            return s.startswith("__") and s.endswith("__")
+        if any(is_dunder(part) for part in symbol):
+            raise ValueError("Cannot define double underscore methods")
+        elif symbol in RIBOSOMES:
             raise ValueError("Cannot define ribosome twice")
         else:
             RIBOSOMES[symbol] = fn
