@@ -10,6 +10,7 @@ import pytest
                           ('brainslug.channel', 'ChannelStorage'),
                           ('brainslug.channel', 'SyncedVar'),
                           ('brainslug.ribosomes', 'RIBOSOMES'),
+                          ('brainslug.ribosomes', 'Symbol'),
                           ('brainslug._slug', 'run_slug'),
                           ('brainslug._slug', 'Slug'),
                           ('brainslug.util', 'get_resources'),

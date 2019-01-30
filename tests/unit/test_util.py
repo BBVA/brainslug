@@ -98,6 +98,7 @@ async def test_wait_for_resources_return_resources(event_loop):
 
 
 @pytest.mark.asyncio
+@pytest.mark.slowtest
 async def test_wait_for_resources_hangs_if_no_resources(event_loop):
     class store:
         wait_for_new_channel = staticmethod(lambda: asyncio.sleep(0))
