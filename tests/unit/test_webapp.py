@@ -27,9 +27,9 @@ async def test_channel_must_respond(aiohttp_client, loop, cli):
     current_langs = {
         "powershell": "powershell_lang"
     }
-    
+
     with patch('brainslug.webapp.process_agent_request') as process_agent_request:
-        with patch.dict('brainslug.languages.LANGUAGES', current_langs):
+        with patch.dict('brainslug.ribosomes.RIBOSOMES', current_langs):
             process_agent_request.return_value = asyncio.sleep(0)
             resp = await cli.post('/channel/powershell/pepe')
             assert resp.status == 200, "channel endpoint must respond"
@@ -41,7 +41,7 @@ async def test_channel_must_call_par(aiohttp_client, loop, cli):
     }
 
     with patch('brainslug.webapp.process_agent_request') as process_agent_request:
-        with patch.dict('brainslug.languages.LANGUAGES', current_langs):
+        with patch.dict('brainslug.ribosomes.RIBOSOMES', current_langs):
             process_agent_request.return_value = asyncio.sleep(0)
             resp = await cli.post('/channel/powershell/pepe')
             assert resp.status == 200, "channel endpoint must respond"
@@ -54,18 +54,18 @@ async def test_channel_must_call_par_with_correct_arguments(aiohttp_client, loop
     }
 
     with patch('brainslug.webapp.process_agent_request') as process_agent_request:
-        with patch.dict('brainslug.languages.LANGUAGES', current_langs):
+        with patch.dict('brainslug.ribosomes.RIBOSOMES', current_langs):
             process_agent_request.return_value = asyncio.sleep(0)
             resp = await cli.post('/channel/powershell/pepe')
             assert resp.status == 200, "channel endpoint must respond"
             process_agent_request.assert_called_once_with("powershell_lang", "pepe", {}, b'')
 
 
-async def test_channel_input_must_call_par_with_correct_language(aiohttp_client, loop, cli):
+async def test_channel_input_must_call_par_with_correct_ribosome(aiohttp_client, loop, cli):
     with patch('brainslug.webapp.process_agent_request') as process_agent_request:
-        with patch.dict('brainslug.languages.LANGUAGES', {}):
+        with patch.dict('brainslug.ribosomes.RIBOSOMES', {}):
             resp = await cli.post('/channel/java/pepe')
-            assert resp.status == 404, "language must not exists"
+            assert resp.status == 404, "ribosome must not exists"
             process_agent_request.assert_not_called()
 
 
@@ -75,7 +75,7 @@ async def test_channel_input_must_retrieve_custom_metadata(aiohttp_client, loop,
     }
 
     with patch('brainslug.webapp.process_agent_request') as process_agent_request:
-        with patch.dict('brainslug.languages.LANGUAGES', current_langs):
+        with patch.dict('brainslug.languages.RIBOSOMES', current_langs):
             process_agent_request.return_value = asyncio.sleep(0)
             resp = await cli.post('/channel/powershell/pepe?custom=true')
             assert resp.status == 200, "response must be Ok"
@@ -90,7 +90,7 @@ def test_channel_input_must_receive_last_result(aiohttp_client, loop, cli, paylo
         }
 
         with patch('brainslug.webapp.process_agent_request') as process_agent_request:
-            with patch.dict('brainslug.languages.LANGUAGES', current_langs):
+            with patch.dict('brainslug.ribosomes.RIBOSOMES', current_langs):
                 process_agent_request.return_value = asyncio.sleep(0)
                 resp = await cli.post('/channel/powershell/pepe', data=payload)
                 assert resp.status == 200, "response must be Ok"
@@ -108,7 +108,7 @@ async def test_channel_input_must_retrieve_custom_metadata(aiohttp_client, loop,
         return str(id(result)).encode('ascii')
 
     with patch('brainslug.webapp.process_agent_request') as process_agent_request:
-        with patch.dict('brainslug.languages.LANGUAGES', current_langs):
+        with patch.dict('brainslug.ribosomes.RIBOSOMES', current_langs):
             process_agent_request.return_value = _process_agent_request()
             resp = await cli.post('/channel/powershell/pepe')
             assert await resp.read() == str(id(result)).encode('ascii')

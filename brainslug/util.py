@@ -6,7 +6,7 @@ import asyncio
 
 
 def to_remote(loop, doc):
-    remote = doc['__language__']
+    remote = doc['__ribosome__']
     channel = doc['__channel__']
 
     def _run_threadsafe(code):

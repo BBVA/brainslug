@@ -3,24 +3,24 @@ import asyncio
 from aiohttp import web
 from tinydb import Query
 
-from brainslug.languages import LANGUAGES
+from brainslug.ribosomes import RIBOSOMES
 from brainslug import channel
 
 
 def config_routes(app):
     app.add_routes([
-        web.post('/channel/{__language__}/{__key__}', channel_input)
+        web.post('/channel/{__ribosome__}/{__key__}', channel_input)
     ])
 
 
-async def process_agent_request(language, key, meta, last_result):
+async def process_agent_request(ribosome, key, meta, last_result):
     Q = Query()
     try:
         [document] = channel.CHANNELS.search(Q['__key__'] == key)
     except ValueError:
         document = {**meta,
                     '__key__': key,
-                    '__language__': language,
+                    '__ribosome__': ribosome,
                     '__channel__': channel.Channel()}
         await channel.CHANNELS.insert(document)
         return await document['__channel__'].first_step()
@@ -30,7 +30,7 @@ async def process_agent_request(language, key, meta, last_result):
 
 async def channel_input(request):
     try:
-        lang = LANGUAGES[request.match_info['__language__']]
+        lang = RIBOSOMES[request.match_info['__ribosome__']]
     except KeyError:
         raise web.HTTPNotFound()
     key = request.match_info['__key__']

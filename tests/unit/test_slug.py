@@ -141,7 +141,7 @@ async def test_run_runs_the_slug_in_a_thread_with_resources(event_loop):
     resource = object()
     called = None
 
-    class Language:
+    class Ribosome:
         def __new__(cls, *args, **kwargs):
             return resource
 
@@ -153,7 +153,7 @@ async def test_run_runs_the_slug_in_a_thread_with_resources(event_loop):
         return threading.currentThread()
 
     with patch('brainslug.channel.CHANNELS', ChannelStorage()) as CHANNELS:
-        await CHANNELS.insert({'__language__': Language,
+        await CHANNELS.insert({'__ribosome__': Ribosome,
                                '__channel__': None,
                                'foo': 'bar'})
         thread_id = await fn.run()

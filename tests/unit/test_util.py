@@ -24,7 +24,7 @@ async def test_to_remote_builds_a_safe_lambda(event_loop):
 
     with patch('asyncio.run_coroutine_threadsafe', return_value=future) as rct:
         channel = Mock()
-        doc = {'__language__': lambda x: [x], '__channel__': channel}
+        doc = {'__ribosome__': lambda x: [x], '__channel__': channel}
 
         # Language is instantiated with the lambda 
         [_run_threadsafe] = to_remote(event_loop, doc)

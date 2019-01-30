@@ -14,7 +14,7 @@ def test_process_agent_request_is_a_function():
 
 @pytest.mark.asyncio
 async def test_channel_is_created_if_not_exists():
-    language = object()
+    ribosome = object()
     key = object()
     meta_key = object()
     meta_value = object()
@@ -25,9 +25,9 @@ async def test_channel_is_created_if_not_exists():
     with patch('brainslug.channel.CHANNELS', new=ChannelStorage()) as CHANNELS:
         with patch('brainslug.channel.Channel.first_step') as first_step:
             first_step.return_value = asyncio.sleep(0)
-            await process_agent_request(language, key, meta, None)
+            await process_agent_request(ribosome, key, meta, None)
             [res] = CHANNELS.search((Q['__key__'] == key)
-                                    & (Q['__language__'] == language)
+                                    & (Q['__ribosome__'] == ribosome)
                                     & (Q[meta_key] == meta_value))
             assert isinstance(res['__channel__'], Channel)
 
