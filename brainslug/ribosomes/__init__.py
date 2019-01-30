@@ -1,6 +1,12 @@
 RIBOSOMES = dict()
 
 
+def define():
+    def _decorated(fn):
+        return fn
+    return _decorated
+
+
 class Symbol(tuple):
     def __getattribute__(self, name):
         if name.startswith('__') and name.endswith('__'):
