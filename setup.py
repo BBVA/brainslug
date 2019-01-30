@@ -13,5 +13,6 @@ setup(name='brainslug',
       zip_safe=False,
       install_requires=[
         'aiohttp==3.5.4',
-        'tinydb==3.12.2'
+        'tinydb==3.12.2',
+        'colorama==0.4.1'
       ])
