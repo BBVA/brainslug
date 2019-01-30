@@ -47,7 +47,7 @@ def test_symbol_dunders_are_forbidden(attribute):
                               alphabet=ascii_letters + digits + '_')))
 def test_symbol_is_aggregative(path):
     assume(not any(p[0] in digits
-                   and not (p.startswith('__') and p.endswith('__'))
+                   or (p.startswith('__') and p.endswith('__'))
                    for p in path))
     result = Symbol()
     for part in path:
