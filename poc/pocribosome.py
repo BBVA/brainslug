@@ -3,15 +3,23 @@ from functools import partial
 LANGUAGES = RIBOSOMES = dict()
 
 
-class Symbol(tuple):
-    def __getattribute__(self, name):
-        return Symbol(self + (name, ))
-
-    def __call__(self, fn):
-        if self in RIBOSOMES:
+def define(symbol):
+    def wrapper(fn):
+        if symbol in RIBOSOMES:
             raise RuntimeError("Cannot declare symbol twice.")
         else:
-            return RIBOSOMES.setdefault(self, fn)
+            return RIBOSOMES.setdefault(symbol, fn)
+    return wrapper
+
+
+class Symbol(tuple):
+    def __getattribute__(self, name):
+        if name.startswith('__') and name.endswith('__'):
+            return super().__getattribute__(name)
+        elif name.isidentifier():
+            return Symbol(self + (name, ))
+        else:
+            raise AttributeError('Invalid attribute %r' % name)
 
 
 class Remote:
@@ -64,3 +72,10 @@ class Remote:
 
 
 ribosome = Symbol()  # Declare symbols with decorators
+
+python  = ribosome.python
+
+
+@define(python.eval)
+def _(remote, code):
+    return remote.remote_eval(code.encode('utf-8')).decode('utf-8')
