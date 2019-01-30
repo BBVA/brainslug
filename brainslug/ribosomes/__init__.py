@@ -1,4 +1,18 @@
-RIBOSOMES = dict()
+__all__ = ['define', 'ribosome', 'Remote']
+
+
+RIBOSOMES = dict()  #: Global ribosome registry
+
+
+class Symbol(tuple):
+    def __getattr__(self, name):
+        if name.isidentifier():
+            return Symbol(self + (name, ))
+        else:
+            raise AttributeError('Invalid attribute %r' % name)
+
+
+ribosome = Symbol()  #: Base ribosome
 
 
 def define(symbol):
@@ -14,14 +28,6 @@ def define(symbol):
             return RIBOSOMES.setdefault(symbol, fn)
 
     return _register
-
-
-class Symbol(tuple):
-    def __getattr__(self, name):
-        if name.isidentifier():
-            return Symbol(self + (name, ))
-        else:
-            raise AttributeError('Invalid attribute %r' % name)
 
 
 class Remote:
