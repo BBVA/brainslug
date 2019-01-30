@@ -12,6 +12,7 @@ import pytest
                           ('brainslug.ribosomes', 'RIBOSOMES'),
                           ('brainslug.ribosomes', 'Symbol'),
                           ('brainslug.ribosomes', 'define'),
+                          ('brainslug.ribosomes', 'Remote'),
                           ('brainslug._slug', 'run_slug'),
                           ('brainslug._slug', 'Slug'),
                           ('brainslug.util', 'get_resources'),

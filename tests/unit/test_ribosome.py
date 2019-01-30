@@ -55,4 +55,3 @@ def test_define_cant_register_dunder_symbols():
         @define(symbol)
         def other_decorated():
             pass
-

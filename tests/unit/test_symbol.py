@@ -43,8 +43,9 @@ def test_symbol_dunders_are_forbidden(attribute):
         assume(False)
 
 
-@given(path=st.tuples(st.text(min_size=1,
-                              alphabet=ascii_letters + digits + '_')))
+@given(path=st.lists(st.text(min_size=1,
+                             alphabet=ascii_letters + digits + '_'),
+                     min_size=1))
 def test_symbol_is_aggregative(path):
     assume(not any(p[0] in digits
                    or (p.startswith('__') and p.endswith('__'))
@@ -53,4 +54,4 @@ def test_symbol_is_aggregative(path):
     for part in path:
         result = getattr(result, part)
 
-    assert tuple(result) == path
+    assert tuple(result) == tuple(path)
