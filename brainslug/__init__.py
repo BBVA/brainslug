@@ -5,7 +5,7 @@ import sys
 from tinydb import Query
 
 from brainslug import _slug
-from brainslug.banner import generate_banner
+from brainslug.banner import BANNER
 
 __all__ = ['Brain', 'slug', 'run']
 
@@ -17,7 +17,7 @@ slug = _slug.Slug.create
 
 
 def run(slug, local=False):
-    print(generate_banner())
+    print(BANNER)
     if local:
         resources = dict()
         for name in slug.spec:
