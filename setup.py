@@ -15,4 +15,9 @@ setup(name='brainslug',
         'aiohttp==3.5.4',
         'tinydb==3.12.2',
         'colorama==0.4.1'
-      ])
+      ],
+      entry_points={
+        'brainslug.ribosomes': [
+            'powershell = brainslug.ribosomes.powershell:powershell'
+        ]
+      })

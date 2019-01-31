@@ -3,9 +3,8 @@ import functools
 
 from concurrent.futures import ThreadPoolExecutor
 
-from brainslug import util
-from brainslug import webapp
-from brainslug import channel
+from brainslug import web
+from brainslug import runtime
 
 
 class Slug:
@@ -25,9 +24,9 @@ class Slug:
         return await loop.run_in_executor(executor, fn)
 
     async def attach_resources(self, loop):
-        resources = await util.wait_for_resources(loop,
-                                                  channel.CHANNELS,
-                                                  self.spec)
+        resources = await runtime.wait_for_resources(loop,
+                                                     runtime.AGENT_INFO,
+                                                     self.spec)
         return functools.partial(self.fn, **resources)
 
     async def run(self):
@@ -37,7 +36,7 @@ class Slug:
 
 
 async def run_slug(slug):
-    runner = await webapp.run_web_server()
+    runner = await web.run_web_server()
     try:
         return await slug.run()
     finally:
