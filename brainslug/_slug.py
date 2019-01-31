@@ -5,6 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 from brainslug import web
 from brainslug import runtime
+from brainslug import ribosome
 
 
 class Slug:
@@ -36,6 +37,7 @@ class Slug:
 
 
 async def run_slug(slug):
+    ribosome.load()
     runner = await web.run_web_server()
     try:
         return await slug.run()

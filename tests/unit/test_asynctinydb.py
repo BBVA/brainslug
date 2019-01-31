@@ -4,21 +4,21 @@ import inspect
 from tinydb import TinyDB, Query
 import pytest
 
-from brainslug.channel import ChannelStorage
+from brainslug.database import AsyncTinyDB
 
 
 def testis_a_class():
-    assert inspect.isclass(ChannelStorage)
+    assert inspect.isclass(AsyncTinyDB)
 
 
 def test_has_a_tinydb_database():
-    cs = ChannelStorage()
+    cs = AsyncTinyDB()
     assert isinstance(cs._db, TinyDB)
 
 
 @pytest.mark.asyncio
 async def test_search_return_content():
-    cs = ChannelStorage()
+    cs = AsyncTinyDB()
     expected = {}
     await cs.insert(expected)
     [current] = cs.search(Query())
@@ -27,16 +27,16 @@ async def test_search_return_content():
 
 @pytest.mark.asyncio
 @pytest.mark.slowtest
-async def test_wait_for_new_channel_hangs(event_loop):
-    cs = ChannelStorage()
+async def test_wait_for_insert_hangs(event_loop):
+    cs = AsyncTinyDB()
     with pytest.raises(asyncio.TimeoutError):
-        await asyncio.wait_for(cs.wait_for_new_channel(), timeout=1)
+        await asyncio.wait_for(cs.wait_for_insert(), timeout=1)
 
 
 @pytest.mark.asyncio
-async def test_wait_for_new_channel_wakes_on_insert(event_loop):
-    cs = ChannelStorage()
-    task = asyncio.create_task(cs.wait_for_new_channel())
+async def test_wait_for_insert_wakes_on_insert(event_loop):
+    cs = AsyncTinyDB()
+    task = asyncio.create_task(cs.wait_for_insert())
     await asyncio.sleep(0)  # Give a chance to wait to adquire the lock
     await cs.insert({})
     await asyncio.wait_for(task, 1)  # SHOULD NOT RAISE

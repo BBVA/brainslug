@@ -6,7 +6,7 @@ from hypothesis import given, assume
 from hypothesis import strategies as st
 import pytest
 
-from brainslug.ribosomes import Symbol
+from brainslug.ribosome import Symbol
 
 
 def test_symbol_is_a_class():

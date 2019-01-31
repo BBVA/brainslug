@@ -4,9 +4,9 @@ from unittest.mock import patch
 
 from tinydb import Query
 
-from brainslug.webapp import process_agent_request
-from brainslug.channel import ChannelStorage, Channel
-
+from brainslug.web import process_agent_request
+from brainslug.channel import Channel
+from brainslug.database import AsyncTinyDB
 
 def test_process_agent_request_is_a_function():
     assert callable(process_agent_request), "process_agent_request must be a function"
@@ -22,7 +22,7 @@ async def test_channel_is_created_if_not_exists():
         meta_key: meta_value
     }
     Q = Query()
-    with patch('brainslug.channel.CHANNELS', new=ChannelStorage()) as CHANNELS:
+    with patch('brainslug.runtime.AGENT_INFO', new=AsyncTinyDB()) as CHANNELS:
         with patch('brainslug.channel.Channel.first_step') as first_step:
             first_step.return_value = asyncio.sleep(0)
             await process_agent_request(ribosome, key, meta, None)
@@ -34,7 +34,7 @@ async def test_channel_is_created_if_not_exists():
 
 @pytest.mark.asyncio
 async def test_channel_call_first_step_if_not_exists(event_loop):
-    with patch('brainslug.channel.CHANNELS', new=ChannelStorage()):
+    with patch('brainslug.runtime.AGENT_INFO', new=AsyncTinyDB()):
         with patch('brainslug.channel.Channel.first_step') as first_step:
             first_step.return_value = asyncio.sleep(0)
             await process_agent_request(None, None, {}, None)
@@ -46,7 +46,7 @@ async def test_par_return_next_code_when_channel_not_exists(event_loop):
     next_code = object()
     async def _next_code():
         return next_code
-    with patch('brainslug.channel.CHANNELS', new=ChannelStorage()) as CHANNELS:
+    with patch('brainslug.runtime.AGENT_INFO', new=AsyncTinyDB()) as CHANNELS:
         with patch('brainslug.channel.Channel.first_step') as first_step:
             first_step.return_value = _next_code()
             assert await process_agent_request(None, None, {}, None) is next_code
@@ -55,7 +55,7 @@ async def test_par_return_next_code_when_channel_not_exists(event_loop):
 @pytest.mark.asyncio
 async def test_channel_call_next_step_if_exists(event_loop):
     last_result = object()
-    with patch('brainslug.channel.CHANNELS', new=ChannelStorage()) as CHANNELS:
+    with patch('brainslug.runtime.AGENT_INFO', new=AsyncTinyDB()) as CHANNELS:
         with patch('brainslug.channel.Channel.next_step') as next_step:
             next_step.return_value = asyncio.sleep(0)
             await CHANNELS.insert({'__key__': None, '__channel__': Channel()})
@@ -68,7 +68,7 @@ async def test_par_return_next_code_when_channel_exists(event_loop):
     next_code = object()
     async def _next_code():
         return next_code
-    with patch('brainslug.channel.CHANNELS', new=ChannelStorage()) as CHANNELS:
+    with patch('brainslug.runtime.AGENT_INFO', new=AsyncTinyDB()) as CHANNELS:
         with patch('brainslug.channel.Channel.next_step') as next_step:
             next_step.return_value = _next_code()
             await CHANNELS.insert({'__key__': None, '__channel__': Channel()})

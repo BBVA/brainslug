@@ -1,12 +1,12 @@
 import pytest
 from unittest.mock import patch
 
-from brainslug import ribosomes
-from brainslug.ribosomes import define
+from brainslug import ribosome
+from brainslug.ribosome import define
 
 
 def test_define_is_decorator():
-    with patch.dict("brainslug.ribosomes.RIBOSOMES"):
+    with patch.dict("brainslug.ribosome.RIBOSOMES"):
         result = object()
 
         @define(tuple())
@@ -23,19 +23,19 @@ def test_define_needs_symbol():
 
 
 def test_define_registers_ribosome():
-    with patch.dict("brainslug.ribosomes.RIBOSOMES"):
+    with patch.dict("brainslug.ribosome.RIBOSOMES"):
         symbol = tuple()
 
         @define(symbol)
         def decorated():
             pass
 
-        assert symbol in ribosomes.RIBOSOMES
-        assert ribosomes.RIBOSOMES[symbol] is decorated
+        assert symbol in ribosome.RIBOSOMES
+        assert ribosome.RIBOSOMES[symbol] is decorated
 
 
 def test_define_cant_register_ribosome_twice():
-    with patch.dict("brainslug.ribosomes.RIBOSOMES"):
+    with patch.dict("brainslug.ribosome.RIBOSOMES"):
         symbol = tuple()
 
         @define(symbol)

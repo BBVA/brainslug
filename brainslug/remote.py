@@ -1,3 +1,5 @@
+import asyncio
+
 from brainslug import ribosome
 
 
@@ -24,15 +26,17 @@ class Remote:
         else:
             raise AttributeError('Invalid attribute %r' % name)
 
+    def __ribosome__(self, *parts):
+        return ribosome.RIBOSOMES[self.__symbol__ + parts]
+
     def __call__(self, *args, **kwargs):
-        return ribosome.RIBOSOMES[self.__symbol__](self.__root__, *args, **kwargs)
+        return self.__ribosome__()(self.__root__, *args, **kwargs)
 
     def __getitem__(self, name):
-        return ribosome.RIBOSOMES[self.__symbol__ + ('getitem', )](self.__root__, name)
+        return self.__ribosome__('getitem')(self.__root__, name)
 
     def __setitem__(self, name, value):
-        return ribosome.RIBOSOMES[self.__symbol__+('setitem',)](self.__root__,
-                                                       name, value)
+        return self.__ribosome__('setitem')(self.__root__, name, value)
 
     def __delitem__(self, name):
-        return ribosome.RIBOSOMES[self.__symbol__ + ('delitem', )](self.__root__, name)
+        return self.__ribosome__('delitem')(self.__root__, name)

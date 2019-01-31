@@ -33,5 +33,3 @@ def root(name):
 def load():
     for entrypoint in iter_entry_points('brainslug.ribosomes'):
         entrypoint.load()
-
-load()  # Load all registered ribosome plugins

@@ -6,8 +6,9 @@ from unittest.mock import patch
 
 import pytest
 
+from brainslug.database import AsyncTinyDB
+from brainslug import body
 from brainslug._slug import Slug
-from brainslug import Brain
 
 
 def test_slug_is_a_class():
@@ -110,7 +111,7 @@ async def test_attach_resources_waits_for_resources(event_loop):
     slug = Slug(lambda:None, None)
     async def _wait_for_resources():
         return {}
-    with patch('brainslug.util.wait_for_resources') as wait_for_resources:
+    with patch('brainslug.runtime.wait_for_resources') as wait_for_resources:
         wait_for_resources.return_value = _wait_for_resources()
         await slug.attach_resources(event_loop)
         wait_for_resources.assert_called_once()
@@ -127,7 +128,7 @@ async def test_attach_resources_return_fn_wrapped(event_loop):
     async def _wait_for_resources():
         return {'arg': resources}
     slug = Slug(fn, None)
-    with patch('brainslug.util.wait_for_resources') as wait_for_resources:
+    with patch('brainslug.runtime.wait_for_resources') as wait_for_resources:
         wait_for_resources.return_value = _wait_for_resources()
         wrapped = await slug.attach_resources(event_loop)
         wrapped()
@@ -136,26 +137,19 @@ async def test_attach_resources_return_fn_wrapped(event_loop):
 
 @pytest.mark.asyncio
 @pytest.mark.integration
-async def test_run_runs_the_slug_in_a_thread_with_resources(event_loop):
-    from brainslug.channel import ChannelStorage
-    resource = object()
+async def test_run_runs_the_slug_in_a_thread(event_loop):
     called = None
 
-    class Ribosome:
-        def __new__(cls, *args, **kwargs):
-            return resource
-
-    @Slug.create(res=Brain.foo == 'bar')
+    @Slug.create(res=body.foo == 'bar')
     def fn(res):
         nonlocal called
         called = True
-        assert res is resource
         return threading.currentThread()
 
-    with patch('brainslug.channel.CHANNELS', ChannelStorage()) as CHANNELS:
-        await CHANNELS.insert({'__ribosome__': Ribosome,
-                               '__channel__': None,
-                               'foo': 'bar'})
+    with patch('brainslug.runtime.AGENT_INFO', AsyncTinyDB()) as AGENT_INFO:
+        await AGENT_INFO.insert({'__ribosome__': None,
+                                 '__channel__': None,
+                                 'foo': 'bar'})
         thread_id = await fn.run()
 
         assert called

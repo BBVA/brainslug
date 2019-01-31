@@ -8,7 +8,7 @@ from aiohttp import web
 
 @pytest.fixture
 def cli(aiohttp_client, loop):
-    from brainslug.webapp import config_routes
+    from brainslug.web import config_routes
     app = web.Application()
     config_routes(app)
     return loop.run_until_complete(aiohttp_client(app))

@@ -8,13 +8,13 @@ import pytest
 
 from brainslug._slug import run_slug
 from brainslug._slug import Slug
-from brainslug.webapp import config_routes as real_config_routes
-from brainslug.webapp import run_web_server
+from brainslug.web import config_routes as real_config_routes
+from brainslug.web import run_web_server
 
 
 @pytest.mark.asyncio
 async def test_run_web_server_configures_the_app(event_loop):
-    with patch('brainslug.webapp.config_routes',
+    with patch('brainslug.web.config_routes',
                wraps=real_config_routes) as config_routes:
         runner = await run_web_server()
         config_routes.assert_called_once()
@@ -46,7 +46,8 @@ async def test_run_slug_returns_slug_result(event_loop):
     def foo():
         return result
 
-    assert await run_slug(foo) is result
+    with patch.dict('brainslug.ribosome.RIBOSOMES', clear=True):
+        assert await run_slug(foo) is result
 
 
 @pytest.mark.asyncio
@@ -55,10 +56,11 @@ async def test_run_slug_starts_the_web_server(event_loop):
         runner = Mock()
         runner.cleanup.return_value = asyncio.sleep(0)
         return runner
-    with patch('brainslug.webapp.run_web_server') as run_web_server:
-        run_web_server.return_value = ret_runner()
-        await run_slug(Slug(lambda: None, {}))
-        run_web_server.assert_called_once()
+    with patch('brainslug.web.run_web_server') as run_web_server:
+        with patch.dict('brainslug.ribosome.RIBOSOMES', clear=True):
+            run_web_server.return_value = ret_runner()
+            await run_slug(Slug(lambda: None, {}))
+            run_web_server.assert_called_once()
 
 
 @pytest.mark.asyncio
@@ -72,8 +74,9 @@ async def test_run_slug_stops_the_web_server_at_exit(event_loop):
     async def ret_runner():
         return runner
 
-    with patch('brainslug.webapp.run_web_server') as run_web_server:
-        run_web_server.return_value = ret_runner()
-        with suppress(Exception):
-            await run_slug(Slug(foo, {}))
-        runner.cleanup.assert_called_once()
+    with patch('brainslug.web.run_web_server') as run_web_server:
+        with patch.dict('brainslug.ribosome.RIBOSOMES', clear=True):
+            run_web_server.return_value = ret_runner()
+            with suppress(Exception):
+                await run_slug(Slug(foo, {}))
+            runner.cleanup.assert_called_once()

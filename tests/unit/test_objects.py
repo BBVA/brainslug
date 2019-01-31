@@ -4,23 +4,22 @@ import pytest
 
 
 @pytest.mark.parametrize('module_name, name',
-                         [('brainslug', 'Brain'),
-                          ('brainslug.channel', 'Channel'),
-                          ('brainslug.channel', 'CHANNELS'),
-                          ('brainslug.channel', 'ChannelStorage'),
-                          ('brainslug.channel', 'SyncedVar'),
-                          ('brainslug.ribosomes', 'RIBOSOMES'),
-                          ('brainslug.ribosomes', 'Symbol'),
-                          ('brainslug.ribosomes', 'define'),
-                          ('brainslug.ribosomes', 'Remote'),
-                          ('brainslug._slug', 'run_slug'),
+                         [('brainslug', 'body'),
                           ('brainslug._slug', 'Slug'),
-                          ('brainslug.util', 'get_resources'),
-                          ('brainslug.util', 'to_remote'),
-                          ('brainslug.util', 'wait_for_resources'),
-                          ('brainslug.webapp', 'config_routes'),
-                          ('brainslug.webapp', 'process_agent_request'),
-                          ('brainslug.webapp', 'run_web_server')])
+                          ('brainslug._slug', 'run_slug'),
+                          ('brainslug.channel', 'Channel'),
+                          ('brainslug.channel', 'SyncedVar'),
+                          ('brainslug.database', 'AsyncTinyDB'),
+                          ('brainslug.remote', 'Remote'),
+                          ('brainslug.ribosome', 'RIBOSOMES'),
+                          ('brainslug.ribosome', 'Symbol'),
+                          ('brainslug.ribosome', 'define'),
+                          ('brainslug.runtime', 'AGENT_INFO'),
+                          ('brainslug.runtime', 'get_resources'),
+                          ('brainslug.runtime', 'wait_for_resources'),
+                          ('brainslug.web', 'config_routes'),
+                          ('brainslug.web', 'process_agent_request'),
+                          ('brainslug.web', 'run_web_server')])
 def test_object_is_importable(module_name, name):
     try:
         module = importlib.import_module(module_name)
@@ -31,11 +30,12 @@ def test_object_is_importable(module_name, name):
                f"Object {name} not found in module {module_name}"
 
 
-def test_channels_is_a_tinydb_instance():
-    from brainslug.channel import CHANNELS, ChannelStorage
-    assert isinstance(CHANNELS, ChannelStorage)
+def test_agent_info_is_a_asynctinydb_instance():
+    from brainslug.runtime import AGENT_INFO
+    from brainslug.database import AsyncTinyDB
+    assert isinstance(AGENT_INFO, AsyncTinyDB)
 
 
 def test_brain_is_a_query():
-    from brainslug import Brain
-    assert Query in Brain.__mro__
+    from brainslug import body
+    assert Query in body.__mro__

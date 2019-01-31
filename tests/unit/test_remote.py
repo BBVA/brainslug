@@ -6,7 +6,8 @@ from hypothesis import given, assume
 from hypothesis import strategies as st
 import pytest
 
-from brainslug.ribosomes import Remote, define, Symbol
+from brainslug.ribosome import define, Symbol
+from brainslug.remote import Remote
 
 
 def test_remote_is_a_class():
@@ -18,9 +19,9 @@ def test_remote_needs_a_base_symbol():
     assert Remote(symbol).__symbol__ is symbol
 
 
-def test_remote_may_contain_the_channel():
-    channel = object()
-    assert Remote(None, channel=channel).__channel__ is channel
+def test_remote_may_contain_the_eval():
+    eval = object()
+    assert Remote(None, eval=eval).__eval__ is eval
 
 
 def test_empty_attribute_is_not_valid():
@@ -44,7 +45,7 @@ def test_attributes_are_other_remotes_if_ribosome_is_not_registered(path):
                and not p.endswith('__')
                for p in path))
 
-    with patch.dict("brainslug.ribosomes.RIBOSOMES"):
+    with patch.dict("brainslug.ribosome.RIBOSOMES"):
         root = remote = Remote(Symbol())
         for part in path:
             remote = getattr(remote, part)
@@ -64,7 +65,7 @@ def test_attributes_are_partial_if_ribosome_is_registered(path):
 
     called = False
 
-    with patch.dict("brainslug.ribosomes.RIBOSOMES"):
+    with patch.dict("brainslug.ribosome.RIBOSOMES"):
         root = remote = Remote(Symbol((path[0], )))
 
         @define(Symbol(path))
@@ -85,7 +86,7 @@ def test_call_pass_args_and_kwargs():
     kwargs = {'kw1': object(), 'kw2': object()}
     called = False
 
-    with patch.dict("brainslug.ribosomes.RIBOSOMES"):
+    with patch.dict("brainslug.ribosome.RIBOSOMES"):
         remote = Remote(Symbol())
 
         @define(Symbol())
@@ -102,7 +103,7 @@ def test_call_pass_args_and_kwargs():
 def test_call_returns_ribosome_return():
     result = object()
 
-    with patch.dict("brainslug.ribosomes.RIBOSOMES"):
+    with patch.dict("brainslug.ribosome.RIBOSOMES"):
         remote = Remote(Symbol())
 
         @define(Symbol())
@@ -115,7 +116,7 @@ def test_call_returns_ribosome_return():
 def test_call_returns_ribosome_return():
     result = object()
 
-    with patch.dict("brainslug.ribosomes.RIBOSOMES"):
+    with patch.dict("brainslug.ribosome.RIBOSOMES"):
         remote = Remote(Symbol())
 
         @define(Symbol())
@@ -131,7 +132,7 @@ def test_call_returns_ribosome_return():
                           ('__delitem__', 'delitem', (object(), ))])
 def test_special_ribosome_methods_are_reachable(special, convention, args):
     result = object()
-    with patch.dict("brainslug.ribosomes.RIBOSOMES"):
+    with patch.dict("brainslug.ribosome.RIBOSOMES"):
         remote = Remote(Symbol())
 
         @define(Symbol((convention, )))

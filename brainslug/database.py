@@ -13,7 +13,7 @@ class AsyncTinyDB:
         self._db = TinyDB(storage=MemoryStorage)
         self._new_channel = asyncio.Condition()
 
-    async def wait_for_new_channel(self):
+    async def wait_for_insert(self):
         async with self._new_channel:
             await self._new_channel.wait()
 
