@@ -1,5 +1,5 @@
 from aiohttp import web
-from brainslug import run_locally
+from brainslug import run
 from brainslug import slug, Brain
 from functools import partial
 import aiohttp
@@ -57,4 +57,4 @@ def remotedesktop(remote):
 
 
 if __name__ == '__main__':
-    run_locally(remotedesktop)
+    run(remotedesktop, local=True)

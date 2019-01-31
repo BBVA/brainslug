@@ -4,7 +4,7 @@ import threading
 import http.server
 import socketserver
 
-from brainslug import slug, run_locally, Brain
+from brainslug import slug, run, Brain
 import psutil
 
 
@@ -50,4 +50,4 @@ def slug_monit(remote):
         time.sleep(5)
 
 
-run_locally(slug_monit)
+run(slug_monit, local=True)
