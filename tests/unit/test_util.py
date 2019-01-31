@@ -101,7 +101,7 @@ async def test_wait_for_resources_return_resources(event_loop):
 @pytest.mark.slowtest
 async def test_wait_for_resources_hangs_if_no_resources(event_loop):
     class store:
-        wait_for_new_channel = staticmethod(lambda: asyncio.sleep(0))
+        wait_for_insert = staticmethod(lambda: asyncio.sleep(0))
     spec = {'foo': body['foo'] == 'bar'}
 
     with patch('brainslug.runtime.get_resources') as get_resources:
@@ -118,7 +118,7 @@ async def test_wait_for_resources_hangs_if_no_resources(event_loop):
 @pytest.mark.slowtest
 async def test_wait_for_resources_calls_wait_for_every_failed_get_resources(event_loop, num_fails):
     store = Mock()
-    store.wait_for_new_channel.side_effect = lambda: asyncio.sleep(0)
+    store.wait_for_insert.side_effect = lambda: asyncio.sleep(0)
     spec = {'foo': body['foo'] == 'bar'}
     result = {'foo': object()}
     with patch('brainslug.runtime.get_resources') as get_resources:
@@ -129,4 +129,4 @@ async def test_wait_for_resources_calls_wait_for_every_failed_get_resources(even
         await asyncio.wait_for(wait_for_resources(event_loop, store, spec), 1)
 
         assert get_resources.call_count == num_fails + 1
-        assert store.wait_for_new_channel.call_count == num_fails
+        assert store.wait_for_insert.call_count == num_fails

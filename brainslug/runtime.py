@@ -23,6 +23,6 @@ def get_resources(loop, store, spec):
 async def wait_for_resources(loop, store, spec):
     resources = get_resources(loop, store, spec)
     while resources is None:
-        await store.wait_for_new_channel()
+        await store.wait_for_insert()
         resources = get_resources(loop, store, spec)
     return resources
