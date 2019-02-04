@@ -6,8 +6,6 @@ import pickle
 import time
 from functools import partial
 
-import psutil
-
 
 URL = "http://localhost:8080/channel/python/pepe"
 HOSTNAME = socket.gethostname()
@@ -30,9 +28,9 @@ def gather_code(last_result):
 def pickle_eval(what):
     res = None
     try:
-        res = eval(what)
+        res = (eval(what),None)
     except Exception as ex:
-        res = ex
+        res = (None,ex)
     return pickle.dumps(res)
 
 
