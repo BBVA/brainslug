@@ -7,7 +7,7 @@ from tinydb import Query
 from brainslug import _slug
 from brainslug.banner import BANNER
 
-__all__ = ['Brain', 'slug', 'run']
+__all__ = ['body', 'slug', 'run']
 
 #: Used to query for resources
 body = Query()
