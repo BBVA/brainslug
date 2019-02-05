@@ -10,6 +10,7 @@ ipdb = "*"
 [packages]
 pillow = "*"
 mss = "*"
+brainslug = {editable = true,path = "./../.."}
 
 [requires]
 python_version = "3.7"

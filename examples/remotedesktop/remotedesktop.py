@@ -1,12 +1,18 @@
 from aiohttp import web
 from brainslug import run
-from brainslug import slug, Brain
+from brainslug import slug, body
+import __main__
 from functools import partial
 import aiohttp
 import asyncio
 import base64
 import json
 import mss
+
+import logging, sys
+from autologging import TRACE
+logging.basicConfig(level=TRACE, stream=sys.stdout,
+    format="%(levelname)s:%(name)s:%(funcName)s:%(message)s")
 
 
 async def process_events(websocket, remote):
@@ -46,15 +52,17 @@ async def manage_websocket(remote, request):
                 await websocket.send_str(base64image.decode('ascii'))
 
 
-@slug(remote=Brain.resources == 'desktop')
+@slug(remote=body.__key__ == 'pepe')
 def remotedesktop(remote):
+    asyncio.set_event_loop(asyncio.new_event_loop())
     app = web.Application()
     app.add_routes([
         web.get('/', index),
         web.get('/ws', partial(manage_websocket, remote))
     ])
-    web.run_app(app)
+    web.run_app(app, port=8091, handle_signals=False)
 
 
 if __name__ == '__main__':
-    run(remotedesktop, local=True)
+    import ribosome
+    run(remotedesktop, local=False)
