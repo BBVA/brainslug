@@ -1,14 +1,35 @@
 <!DOCTYPE html>
 <html>
-
+<head>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/siimple@3.3.0/dist/siimple.min.css">
+</head>
 <body>
-
-<canvas id="remotescreen" tabindex='1' style="border:1px solid #000000;">
-Your browser does not support the HTML5 canvas tag.
-</canvas>
-
+    <div class="siimple-navbar siimple-navbar--extra-large siimple-navbar--dark">
+        <div class="siimple-navbar-title"><img style="height: 100%" src="/assets/images/slugvnc.png" />&nbsp;SlugVNC</div>
+        <div class="siimple--float-right">
+            <div class="siimple-navbar-item">Logout</div>
+        </div>
+    </div>
+    <div class="siimple-content siimple-content--extra-large">
+        <div class="siimple-grid">
+            <div class="siimple-grid-row">
+                <div class="siimple-grid-col siimple-grid-col--12">
+                    <div class="siimple-alert siimple-alert--primary">
+                        <div class="siimple-alert-close"></div>
+                        <div class="siimple-alert-title">Welcome, Admin</div>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                    </div>
+                    <canvas id="remotescreen" tabindex='1' style="border:1px solid #000000; width: 100%;">
+                    Your browser does not support the HTML5 canvas tag.
+                    </canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="siimple-footer siimple-footer--extra-large siimple-footer--dark">
+        &copy; 2019 <strong>SlugCorp Ltd.</strong>
+    </div>
 </body>
-
 <script language="javascript" type="text/javascript">
   canvas = document.getElementById("remotescreen");
   context = canvas.getContext('2d');
@@ -23,22 +44,23 @@ Your browser does not support the HTML5 canvas tag.
 
   function onMessage(evt)
   {
-    if (canvas.width != window.innerWidth) canvas.width = window.innerWidth;
-    if (canvas.height != window.innerHeight) canvas.height = window.innerHeight;
     var image = new Image();
     image.onload = function(){
       context.drawImage(image,0,0,canvas.width,canvas.height);
       remoteWidth = image.width;
       remoteHeight = image.height;
+      if (canvas.width != image.width) canvas.width = image.width;
+      if (canvas.height != image.height) canvas.height = image.height;
     };
-    image.src = "data:image/png;base64," + evt.data;
+    image.src = "data:image/png;base64," + evt.data; 
+    
   }
 
   function getMousePos(canvas, evt) {
     var rect = canvas.getBoundingClientRect();
     return {
-      x: Math.floor((evt.clientX - rect.left) * remoteWidth / canvas.width),
-      y: Math.floor((evt.clientY - rect.top) * remoteHeight / canvas.height)
+      x: Math.floor(evt.layerX * remoteWidth / canvas.scrollWidth),
+      y: Math.floor(evt.layerY * remoteHeight / canvas.scrollHeight)
     };
   }
 
@@ -53,7 +75,31 @@ Your browser does not support the HTML5 canvas tag.
     );
   }, false);
 
+  canvas.addEventListener("keydown", function(evt) {
+    var key = undefined;
+    switch (evt.keyCode) {
+      case 8:
+        key = 'backspace';
+        break;
+      case 46:
+        key = 'delete';
+        break;
+      default:
+        break;
+    }
+    if (typeof key !== 'undefined') {
+      evt.preventDefault();
+      websocket.send(
+        JSON.stringify({
+          type: "keypress",
+          k: key
+        })
+      );
+    }
+  }, false);
+
   canvas.addEventListener("keypress", function(evt) {
+    evt.preventDefault();
     websocket.send(
       JSON.stringify({
         type: "keypress",
@@ -66,13 +112,32 @@ Your browser does not support the HTML5 canvas tag.
     var mousePos = getMousePos(canvas, evt);
     websocket.send(
       JSON.stringify({
-        type: "click",
+        type: "leftclick",
         x: mousePos.x,
         y: mousePos.y
       })
     );
   }, false);
 
+  canvas.addEventListener("contextmenu", function(evt) {
+    evt.preventDefault();
+    var mousePos = getMousePos(canvas, evt);
+    websocket.send(
+      JSON.stringify({
+        type: "rightclick",
+        x: mousePos.x,
+        y: mousePos.y
+      })
+    );
+  }, false);
+
+/*  document.addEventListener("fullscreenchange", function(event) {
+    if (document.fullscreenElement) {
+      // The browser is in full-screen mode, with document.fullscreenElement
+      // being the element presented full-screen.
+    }
+  });
+*/
 
 </script>
 </html>
