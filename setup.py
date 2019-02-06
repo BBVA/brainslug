@@ -14,7 +14,8 @@ setup(name='brainslug',
       install_requires=[
         'aiohttp==3.5.4',
         'tinydb==3.12.2',
-        'colorama==0.4.1'
+        'colorama==0.4.1',
+        'aiohttp-cors==0.7.0'
       ],
       entry_points={
         'brainslug.ribosomes': [

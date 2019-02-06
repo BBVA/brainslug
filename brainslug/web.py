@@ -3,6 +3,7 @@ from uuid import uuid4
 
 from aiohttp import web
 from tinydb import Query
+import aiohttp_cors
 
 from brainslug import runtime
 from brainslug.ribosome import RIBOSOMES, Symbol
@@ -15,6 +16,15 @@ def config_routes(app):
         web.get('/boot/{__ribosome__}', get_boot),
         web.get('/boot/{__ribosome__}/{__key__}', get_boot)
     ])
+    cors = aiohttp_cors.setup(app, defaults={
+        "*": aiohttp_cors.ResourceOptions(
+                allow_credentials=True,
+                expose_headers="*",
+                allow_headers="*",
+            )
+    })
+    for resource in app.router.resources():
+        cors.add(resource)
 
 
 async def process_agent_request(ribosome, key, meta, last_result):
