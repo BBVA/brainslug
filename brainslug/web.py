@@ -1,15 +1,19 @@
 import asyncio
+from uuid import uuid4
 
 from aiohttp import web
 from tinydb import Query
 
 from brainslug import runtime
+from brainslug.ribosome import RIBOSOMES, Symbol
 from brainslug.channel import Channel
 
 
 def config_routes(app):
     app.add_routes([
-        web.post('/channel/{__ribosome__}/{__key__}', channel_input)
+        web.post('/channel/{__ribosome__}/{__key__}', channel_input),
+        web.get('/boot/{__ribosome__}', get_boot),
+        web.get('/boot/{__ribosome__}/{__key__}', get_boot)
     ])
 
 
@@ -39,8 +43,23 @@ async def channel_input(request):
     return web.Response(body=next_code)
 
 
+async def get_boot(request):
+    ribosome = request.match_info['__ribosome__']
+    key = request.match_info.get('__key__', str(uuid4()))
+    try:
+        boot = RIBOSOMES[Symbol((ribosome, 'boot'))]
+    except KeyError as exc:
+        raise web.HTTPNotFound() from exc
+    else:
+        url = request.url
+        url = request.url.with_path(f'/channel/{ribosome}/{key}')
+        url = url.with_query(request.url.query)
+        return web.Response(body=boot(remote=None, url=url,
+                                      **request.rel_url.query))
+
+
 async def run_web_server():
-    app = web.Application()
+    app = web.Application(client_max_size=None)
     config_routes(app)
 
     runner = web.AppRunner(app)
