@@ -1,5 +1,4 @@
-.. image:: https://gitlab.com/robertomartinezp/brain-slug/raw/master/assets/images/brainslug.svg
-  :align: center
+.. image:: https://gitlab.com/robertomartinezp/brain-slug/raw/master/assets/images/brainslug.svg :align: center
 
 BrainSlug is a framework for *parasitic computing*. Allowing you to
 write programs which code and logic live in a computer but actions or
@@ -12,7 +11,8 @@ Example:
    from brainslug import run, slug, body
 
    @slug(remote=body.platform == 'linux')
-   def get_user_id(remote, name):
+   def get_user_id(remote):
+       name = 'root'
        with remote.open('/etc/passwd', 'r') as passwd:
            for line in passwd:
                if line.startswith(name):
