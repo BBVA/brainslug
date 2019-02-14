@@ -11,14 +11,13 @@ Example:
    from brainslug import run, slug, body
 
    @slug(remote=body.platform == 'linux')
-   def get_user_id(remote):
-       name = 'root'
+   def get_root_shell(remote):
        with remote.open('/etc/passwd', 'r') as passwd:
            for line in passwd:
-               if line.startswith(name):
-                   return line.split(':')[2]
+               if line.startswith('root'):
+                   return line.split(':')[-1]
 
-   run(get_user_id)
+   run(get_root_shell)
 
 
 This code should be run in a computer we call *slug*. Running this code
