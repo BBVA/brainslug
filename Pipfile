@@ -15,6 +15,7 @@ pytest-aiohttp = "*"
 hypothesis = "*"
 ipdb = "*"
 colorama = "*"
+sphinx = "*"
 
 [requires]
 python_version = "3.7"
