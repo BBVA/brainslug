@@ -4,10 +4,10 @@ VERSION = '0.0.1'
 
 setup(name='brainslug',
       version=VERSION,
-      description="Best Trojan Ever",
+      description="Parasitic Computing Framework",
       classifiers=[
       ],
-      keywords='remote administration tool',
+      keywords='parasitic computing framework',
       packages=find_packages(exclude=["tests", "docs", "poc"]),
       include_package_data=True,
       zip_safe=False,

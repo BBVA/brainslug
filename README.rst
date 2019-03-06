@@ -5,9 +5,17 @@
 
 .. image:: https://raw.githubusercontent.com/BBVA/brainslug/master/assets/images/brainslug.png
    :align: center
+	
+.. image:: https://img.shields.io/circleci/project/github/BBVA/brainslug/master.svg
+   :target: https://circleci.com/gh/BBVA/brainslug/tree/master
 
-.. image:: https://circleci.com/gh/BBVA/brainslug/tree/master.svg?style=svg
-    :target: https://circleci.com/gh/BBVA/brainslug/tree/master
+.. image:: https://readthedocs.org/projects/brainslug/badge/?version=latest
+   :target: https://brainslug.readthedocs.io/en/latest/?badge=latest
+   :alt: Documentation Status
+
+.. image:: https://img.shields.io/github/license/BBVA/brainslug.svg
+   :alt: License Apache
+
 
 BrainSlug is a framework for *parasitic computing*. Allowing you to
 write programs which code and logic live in a computer but actions or
