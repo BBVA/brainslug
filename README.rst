@@ -1,4 +1,5 @@
-.. image:: https://gitlab.com/robertomartinezp/brain-slug/raw/master/assets/images/brainslug.svg :align: center
+.. image:: https://raw.githubusercontent.com/BBVA/brainslug/master/assets/images/brainslug.svg
+   :align: center
 
 BrainSlug is a framework for *parasitic computing*. Allowing you to
 write programs which code and logic live in a computer but actions or
