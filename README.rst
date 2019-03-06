@@ -17,7 +17,6 @@
    :target: https://brainslug.readthedocs.io/en/latest/?badge=latest
 
 .. image:: https://img.shields.io/github/license/BBVA/brainslug.svg
-   :alt: License Apache
 
 BrainSlug is a framework for *parasitic computing*. Allowing you to
 write programs which code and logic live in a computer but actions or
