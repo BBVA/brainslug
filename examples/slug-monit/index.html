@@ -10,6 +10,10 @@
     body {
       font-family: 'Press Start 2P', cursive;
     }
+    .cont {
+      max-height: 200px;
+      max-width: 400px;
+    }
   </style>
 </head>
 <body>
@@ -57,7 +61,7 @@
     const renderCPU = (cpu) => {
       return html`
       <h2>CPU</h2>
-      <div>
+      <div class="cont">
         <svg viewBox="0 0 1000 500">
           <path stroke-width="75" fill="none" stroke="${color(cpu/100)}" 
             d="${svg_arc_path(500, 500, 450, -90, (cpu/100) * 180.0 - 90)}">
@@ -151,7 +155,8 @@
       xhr.send();
     }
 
-    setInterval(getData, 5000);
+    getData();
+    setInterval(getData, 300);
   </script>
 </body>
 </html>

@@ -1,5 +1,6 @@
 import asyncio
 from uuid import uuid4
+import os
 
 from aiohttp import web
 from tinydb import Query
@@ -13,6 +14,7 @@ from brainslug.channel import Channel
 def config_routes(app):
     app.add_routes([
         web.post('/channel/{__ribosome__}/{__key__}', channel_input),
+        web.get('/launch/{__ribosome__}', get_launch),
         web.get('/boot/{__ribosome__}', get_boot),
         web.get('/boot/{__ribosome__}/{__key__}', get_boot)
     ])
@@ -68,6 +70,21 @@ async def get_boot(request):
                                       **request.rel_url.query))
 
 
+async def get_launch(request):
+    ribosome = request.match_info['__ribosome__']
+    try:
+        launch = RIBOSOMES[Symbol((ribosome, 'launch'))]
+    except KeyError as exc:
+        raise web.HTTPNotFound() from exc
+    else:
+        url = request.url
+        url = request.url.with_path(f'/boot/{ribosome}')
+        url = url.with_query(request.url.query)
+        return web.Response(body=launch(remote=None, url=url,
+                                        **request.rel_url.query),
+                            content_type="text/html")
+
+
 async def run_web_server():
     app = web.Application(client_max_size=None)
     config_routes(app)
@@ -75,7 +92,10 @@ async def run_web_server():
     runner = web.AppRunner(app)
     await runner.setup()
 
-    server = web.TCPSite(runner, 'localhost', 8080, shutdown_timeout=0)
+    server = web.TCPSite(runner,
+                         os.environ.get('BRAINSLUG_HOST', '0.0.0.0'),
+                         int(os.environ.get('BRAINSLUG_PORT', '8080')),
+                         shutdown_timeout=0)
     asyncio.create_task(server.start())
 
     return runner

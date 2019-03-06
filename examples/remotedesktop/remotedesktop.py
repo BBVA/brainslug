@@ -6,14 +6,14 @@ import json
 from aiohttp import web
 import aiohttp
 import mss
+import time
 
 from brainslug import run
 from brainslug import slug, body
+import threading
+import os
 
 import logging, sys
-from autologging import TRACE
-logging.basicConfig(level=TRACE, stream=sys.stdout,
-    format="%(levelname)s:%(name)s:%(funcName)s:%(message)s")
 
 
 async def process_events(websocket, remote):
@@ -59,16 +59,22 @@ async def manage_websocket(remote, request):
                 base64image = base64.b64encode(screenshot.read())
                 await websocket.send_str(base64image.decode('ascii'))
             # TODO: Limit?
-            # await asyncio.sleep(.5)
+            await asyncio.sleep(1)
+
+async def logout(remote, request):
+    threading.Thread(target=remote.sys.exit, args=(0, ), daemon=True).start()
+    time.sleep(3)
+    os._exit(0)
 
 
-@slug(remote=body.capability == 'desktop')
+@slug(remote=body)
 def remotedesktop(remote):
     asyncio.set_event_loop(asyncio.new_event_loop())
     app = web.Application()
     app.add_routes([
         web.get('/', index),
         web.static('/assets', path='assets'),
+        web.get('/logout', partial(logout, remote)),
         web.get('/ws', partial(manage_websocket, remote))
 
     ])

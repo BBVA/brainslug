@@ -14,6 +14,63 @@ from brainslug.ribosome import root, define
 # ----------------------------------------- #
 python = root('python')
 
+@define(python.launch)
+def _(remote, url, **kwargs):
+    return f"curl {url} | python"
+
+
+@define(python.boot)
+def _(remote, url, **kwargs):
+    return (
+        f"""
+import sys
+import requests
+import socket
+import traceback
+import pickle
+import time
+from functools import partial
+
+
+URL = "{url}"
+HOSTNAME = socket.gethostname()
+
+
+def gather_code(last_result):
+    if last_result:
+        res = requests.post(
+                URL,
+                params={{"hostname": HOSTNAME}},
+                data=last_result
+                )
+    else:
+        res = requests.post(
+                URL,
+                params={{"hostname": HOSTNAME}},
+                )
+    return res.content
+
+def pickle_eval(what):
+    res = None
+    try:
+        res = (eval(what),None)
+    except Exception as ex:
+        res = (None,ex)
+    return pickle.dumps(res)
+
+
+result = None
+
+while True:
+    prepared_request = partial(gather_code, result)
+    try:
+        code = prepared_request()
+        result = pickle_eval(code)
+    except Exception as ex:
+        print("can't comunicate: ", ex)
+        time.sleep(1)
+
+        """)
 
 @define(python._import)
 def _(remote, name):
@@ -81,9 +138,9 @@ def start_server():
         httpd.serve_forever()
 
 
-@slug(remote=body.__key__ == 'pepe')
+@slug(remote=body)
 def slug_monit(remote):
-    t = threading.Thread(target=start_server)
+    t = threading.Thread(target=start_server, daemon=True)
     t.start()
 
     while True:
@@ -115,7 +172,7 @@ def slug_monit(remote):
         print(info)
         with open("monit.json", "w") as fil:
             json.dump(info, fil)
-        time.sleep(5)
+        time.sleep(.3)
 
 
 run(slug_monit)
