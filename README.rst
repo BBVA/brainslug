@@ -1,6 +1,6 @@
 .. warning::
 
-   BrainSlug is a work in progress. Code may change rapidly in a non compatible manner. Any question, please drop us an issue
+   BrainSlug is a work in progress. Code may change rapidly in incompatible manners. Any question, please drop us an issue
    
 
 .. image:: https://raw.githubusercontent.com/BBVA/brainslug/master/assets/images/brainslug.png
