@@ -8,6 +8,10 @@ BrainSlug is a framework for *parasitic computing*. Allowing you to
 write programs which code and logic live in a computer but actions or
 *side-effects* are performed on another.
 
+.. warning::
+
+   BrainSlug is a work in progress. Code may change rapidly in a non compatible manner. Any question, please drop us an issue
+   
 Example:
 
 .. code-block:: python
