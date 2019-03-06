@@ -1,6 +1,9 @@
 .. image:: https://raw.githubusercontent.com/BBVA/brainslug/master/assets/images/brainslug.png
    :align: center
 
+.. image:: https://circleci.com/gh/BBVA/brainslug/tree/master.svg?style=svg
+    :target: https://circleci.com/gh/BBVA/brainslug/tree/master
+
 BrainSlug is a framework for *parasitic computing*. Allowing you to
 write programs which code and logic live in a computer but actions or
 *side-effects* are performed on another.
