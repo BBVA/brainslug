@@ -20,7 +20,7 @@
 # -- Project information -----------------------------------------------------
 
 project = 'brainslug'
-copyright = '2019, Roberto Abdelkader Martínez Pérez, César Gallego Rodríguez'
+copyright = 'Copyright 2019 Banco Bilbao Vizcaya Argentaria, S.A.'
 author = 'Roberto Abdelkader Martínez Pérez, César Gallego Rodríguez'
 
 # The short X.Y version
