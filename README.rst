@@ -1,4 +1,4 @@
-.. image:: https://raw.githubusercontent.com/BBVA/brainslug/master/assets/images/brainslug.svg
+.. image:: https://raw.githubusercontent.com/BBVA/brainslug/master/assets/images/brainslug.png
    :align: center
 
 BrainSlug is a framework for *parasitic computing*. Allowing you to
