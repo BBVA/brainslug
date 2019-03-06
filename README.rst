@@ -2,20 +2,22 @@
 
    BrainSlug is a work in progress. Code may change rapidly in incompatible manners. Any question, please drop us an issue
    
-
 .. image:: https://raw.githubusercontent.com/BBVA/brainslug/master/assets/images/brainslug.png
    :align: center
-	
+
+
+
+.. image:: https://img.shields.io/pypi/v/brainslug.svg
+   :target: https://pypi.org/project/brainslug/
+
 .. image:: https://img.shields.io/circleci/project/github/BBVA/brainslug/master.svg
    :target: https://circleci.com/gh/BBVA/brainslug/tree/master
 
 .. image:: https://readthedocs.org/projects/brainslug/badge/?version=latest
    :target: https://brainslug.readthedocs.io/en/latest/?badge=latest
-   :alt: Documentation Status
 
 .. image:: https://img.shields.io/github/license/BBVA/brainslug.svg
    :alt: License Apache
-
 
 BrainSlug is a framework for *parasitic computing*. Allowing you to
 write programs which code and logic live in a computer but actions or
