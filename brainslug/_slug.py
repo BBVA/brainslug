@@ -32,7 +32,9 @@ class Slug:
 
     async def run(self):
         loop = asyncio.get_event_loop()
+        print("Waiting for bodies...")
         prepared = await self.attach_resources(loop)
+        print("Bodies attached!")
         return await self.run_in_thread(loop, prepared)
 
 
